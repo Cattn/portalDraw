@@ -5,9 +5,13 @@ import { baseURL } from '$lib/types';
 export const load: LayoutServerLoad = async ({ fetch }) => {
 	try {
 		// Load settings from the API server using server-side fetch
-		const response = await fetch(`${baseURL}/api/settings`);
+		const apiUrl = `${baseURL}/api/settings`;
+		console.log('SSR attempting to connect to API at:', apiUrl);
+		
+		const response = await fetch(apiUrl);
 		
 		if (!response.ok) {
+			console.error('API response not ok:', response.status, response.statusText);
 			throw new Error(`HTTP ${response.status}`);
 		}
 		
