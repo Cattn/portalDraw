@@ -1,5 +1,9 @@
+import dotenv from 'dotenv';
 import { handler } from './build/handler.js';
 import express from 'express';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 
