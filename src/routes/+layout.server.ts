@@ -1,10 +1,11 @@
 import { DEFAULT_SETTINGS } from '$lib/types';
 import type { LayoutServerLoad } from './$types';
-import { baseURL } from '$lib/types';
+import { getBaseURL } from '$lib/types';
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
 	try {
 		// Load settings from the API server using server-side fetch
+		const baseURL = getBaseURL();
 		const apiUrl = `${baseURL}/api/settings`;
 		console.log('SSR attempting to connect to API at:', apiUrl);
 		

@@ -1,9 +1,10 @@
 import { browser } from '$app/environment';
 import type { Board, DrawingEvent, BoardSession, AppSettings } from '$lib/types';
-import { baseURL } from '$lib/types';
+import { getBaseURL } from '$lib/types';
 
 class ApiService {
 	private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+		const baseURL = getBaseURL();
 		const url = `${baseURL}/api${endpoint}`;
 		
 		const defaultOptions: RequestInit = {
@@ -46,6 +47,7 @@ class ApiService {
 	}
 
 	async deleteBoard(id: string): Promise<void> {
+		const baseURL = getBaseURL();
 		const url = `${baseURL}/api/boards/${id}`;
 		
 		const response = await fetch(url, {
@@ -100,6 +102,7 @@ class ApiService {
 
 	// Health check
 	async healthCheck(): Promise<{ status: string; timestamp: string; uptime: number }> {
+		const baseURL = getBaseURL();
 		const url = `${baseURL}/health`;
 		const response = await fetch(url);
 		return response.json();

@@ -15,13 +15,14 @@ export function getBaseURL(): string {
 		return port !== defaultPort ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`;
 	} else {
 		// Server-side: Always connect directly to the API server on localhost
+		// Environment variables are only available at runtime, not build time
 		const apiPort = process.env.PORT || '3001';
-		console.log('SSR environment - PORT:', process.env.PORT, 'HOST:', process.env.HOST, 'PUBLIC_PORT:', process.env.PUBLIC_PORT);
-		console.log('Using API port:', apiPort);
+		console.log('SSR runtime environment - PORT:', process.env.PORT, 'Using API port:', apiPort);
 		return `http://localhost:${apiPort}`;
 	}
 }
 
+// Make baseURL dynamic by calling the function instead of storing the result
 export const baseURL = getBaseURL();
 export interface Board {
 	id: string;
