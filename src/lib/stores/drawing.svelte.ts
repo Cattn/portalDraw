@@ -1,4 +1,5 @@
 import type { DrawingEvent, DrawingStroke, DrawingTool, Point } from '$lib/types';
+import { settingsStore } from './settings.svelte';
 
 class DrawingStore {
 	strokes = $state<DrawingStroke[]>([]);
@@ -19,6 +20,9 @@ class DrawingStore {
 	
 	// Stroke eraser state
 	highlightedStrokes = $state<Set<string>>(new Set());
+	
+	// Smoothing state
+	private rawPoints = $state<Point[]>([]);
 	
 	private history = $state<DrawingStroke[][]>([]);
 	private historyIndex = $state(-1);
@@ -44,6 +48,139 @@ class DrawingStore {
 			'#9b59b6', '#1abc9c', '#e67e22', '#34495e'
 		];
 		return colors[Math.floor(Math.random() * colors.length)];
+	}
+
+	// Stroke smoothing algorithms
+	private smoothPoints(points: Point[]): Point[] {
+		if (!settingsStore.drawing.smoothStrokes || points.length < 3) {
+			return points;
+		}
+
+		// Apply simple moving average smoothing
+		const smoothed: Point[] = [];
+		const windowSize = Math.min(3, points.length);
+		
+		// Add first point as-is
+		smoothed.push(points[0]);
+		
+		// Smooth middle points
+		for (let i = 1; i < points.length - 1; i++) {
+			const start = Math.max(0, i - Math.floor(windowSize / 2));
+			const end = Math.min(points.length, i + Math.ceil(windowSize / 2));
+			
+			let sumX = 0, sumY = 0;
+			let count = 0;
+			
+			for (let j = start; j < end; j++) {
+				sumX += points[j].x;
+				sumY += points[j].y;
+				count++;
+			}
+			
+			smoothed.push({
+				x: sumX / count,
+				y: sumY / count,
+				pressure: points[i].pressure
+			});
+		}
+		
+		// Add last point as-is if we have more than one point
+		if (points.length > 1) {
+			smoothed.push(points[points.length - 1]);
+		}
+		
+		return smoothed;
+	}
+
+	private interpolatePoints(points: Point[]): Point[] {
+		if (!settingsStore.drawing.smoothStrokes || points.length < 2) {
+			return points;
+		}
+
+		const interpolated: Point[] = [];
+		
+		for (let i = 0; i < points.length - 1; i++) {
+			const current = points[i];
+			const next = points[i + 1];
+			
+			interpolated.push(current);
+			
+			// Calculate distance between points
+			const dx = next.x - current.x;
+			const dy = next.y - current.y;
+			const distance = Math.sqrt(dx * dx + dy * dy);
+			
+			// Only interpolate if points are far enough apart
+			if (distance > 3) {
+				const steps = Math.floor(distance / 2);
+				
+				for (let step = 1; step < steps; step++) {
+					const t = step / steps;
+					interpolated.push({
+						x: current.x + dx * t,
+						y: current.y + dy * t,
+						pressure: current.pressure !== undefined && next.pressure !== undefined 
+							? current.pressure + (next.pressure - current.pressure) * t
+							: undefined
+					});
+				}
+			}
+		}
+		
+		// Add the last point
+		if (points.length > 0) {
+			interpolated.push(points[points.length - 1]);
+		}
+		
+		return interpolated;
+	}
+
+	private applyBezierSmoothing(points: Point[]): Point[] {
+		if (!settingsStore.drawing.smoothStrokes || points.length < 3) {
+			return points;
+		}
+
+		const smoothed: Point[] = [];
+		smoothed.push(points[0]);
+
+		for (let i = 1; i < points.length - 1; i++) {
+			const prev = points[i - 1];
+			const current = points[i];
+			const next = points[i + 1];
+
+			// Calculate control points for quadratic Bezier curve
+			const cpX = (prev.x + next.x) / 2;
+			const cpY = (prev.y + next.y) / 2;
+
+			// Generate intermediate points along the curve
+			const steps = 3;
+			for (let step = 0; step <= steps; step++) {
+				const t = step / steps;
+				const oneMinusT = 1 - t;
+
+				const x = oneMinusT * oneMinusT * prev.x + 
+						 2 * oneMinusT * t * cpX + 
+						 t * t * current.x;
+				const y = oneMinusT * oneMinusT * prev.y + 
+						 2 * oneMinusT * t * cpY + 
+						 t * t * current.y;
+
+				if (step > 0 || i === 1) { // Skip first point except for first iteration
+					smoothed.push({
+						x,
+						y,
+						pressure: current.pressure
+					});
+				}
+			}
+		}
+
+		// Add the last point
+		if (points.length > 1) {
+			smoothed.push(points[points.length - 1]);
+		}
+
+		return smoothed;
 	}
 	
 	initCanvas(canvasElement: HTMLCanvasElement) {
@@ -128,6 +265,9 @@ class DrawingStore {
 		// Transform screen coordinates to canvas coordinates
 		const canvasPoint = this.screenToCanvas(point);
 		
+		// Initialize raw points for smoothing
+		this.rawPoints = [canvasPoint];
+		
 		this.isDrawing = true;
 		this.currentStroke = {
 			id: crypto.randomUUID(),
@@ -154,7 +294,19 @@ class DrawingStore {
 		
 		// Transform screen coordinates to canvas coordinates
 		const canvasPoint = this.screenToCanvas(point);
-		this.currentStroke.points.push(canvasPoint);
+		
+		// Add to raw points for smoothing
+		this.rawPoints.push(canvasPoint);
+		
+		// Apply smoothing if enabled
+		if (settingsStore.drawing.smoothStrokes && this.rawPoints.length > 2) {
+			// Apply progressive smoothing for real-time drawing
+			const smoothed = this.smoothPoints(this.rawPoints);
+			this.currentStroke.points = smoothed;
+		} else {
+			// Direct point addition when smoothing is disabled
+			this.currentStroke.points.push(canvasPoint);
+		}
 		
 		// Draw the current stroke in real-time
 		this.drawCurrentStroke();
@@ -163,9 +315,26 @@ class DrawingStore {
 	endStroke() {
 		if (!this.isDrawing || !this.currentStroke) return;
 		
+		// Apply final smoothing to the complete stroke
+		if (settingsStore.drawing.smoothStrokes && this.rawPoints.length > 2) {
+			// Apply more comprehensive smoothing for the final stroke
+			let finalPoints = this.smoothPoints(this.rawPoints);
+			finalPoints = this.interpolatePoints(finalPoints);
+			
+			// Apply bezier smoothing for very smooth curves (optional, can be heavy)
+			if (finalPoints.length > 5) {
+				finalPoints = this.applyBezierSmoothing(finalPoints);
+			}
+			
+			this.currentStroke.points = finalPoints;
+		}
+		
 		this.isDrawing = false;
 		this.strokes.push(this.currentStroke);
 		this.addToHistory();
+		
+		// Final redraw with completed stroke
+		this.drawStroke(this.currentStroke);
 		
 		const event: DrawingEvent = {
 			id: crypto.randomUUID(),
@@ -180,6 +349,7 @@ class DrawingStore {
 		this.emitDrawingEvent(event);
 		
 		this.currentStroke = null;
+		this.rawPoints = [];
 	}
 	
 	// Update cursor hover for stroke eraser
@@ -331,8 +501,29 @@ class DrawingStore {
 			this.context.beginPath();
 			this.context.moveTo(screenPoints[0].x, screenPoints[0].y);
 			
-			for (let i = 1; i < screenPoints.length; i++) {
-				this.context.lineTo(screenPoints[i].x, screenPoints[i].y);
+			// Use quadratic curves for smoother rendering when smoothing is enabled
+			if (settingsStore.drawing.smoothStrokes && screenPoints.length > 2) {
+				for (let i = 1; i < screenPoints.length - 1; i++) {
+					const current = screenPoints[i];
+					const next = screenPoints[i + 1];
+					
+					// Calculate midpoint for smooth curves
+					const midX = (current.x + next.x) / 2;
+					const midY = (current.y + next.y) / 2;
+					
+					this.context.quadraticCurveTo(current.x, current.y, midX, midY);
+				}
+				
+				// Draw to the final point
+				if (screenPoints.length > 1) {
+					const lastPoint = screenPoints[screenPoints.length - 1];
+					this.context.lineTo(lastPoint.x, lastPoint.y);
+				}
+			} else {
+				// Standard line drawing when smoothing is disabled
+				for (let i = 1; i < screenPoints.length; i++) {
+					this.context.lineTo(screenPoints[i].x, screenPoints[i].y);
+				}
 			}
 			
 			this.context.stroke();
