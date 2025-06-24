@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from 'm3-svelte';
 	import { drawingStore } from '$lib/stores/drawing.svelte';
+	import { settingsStore } from '$lib/stores/settings.svelte';
 	import type { DrawingTool } from '$lib/types';
 
 	interface Props {
@@ -29,6 +30,10 @@
 	});
 	let currentColor = $state('#000000');
 	
+	// Settings panel toggle
+	let showDefaultsPanel = $state(false);
+	let defaultsPanelElement = $state<HTMLElement>();
+	
 	// Update reactive variables when store state changes
 	$effect(() => {
 		currentTool = drawingStore.currentTool;
@@ -54,6 +59,38 @@
 		drawingStore.setColor(color);
 	}
 
+	// Functions to update default settings
+	async function setAsDefault() {
+		try {
+			const toolType = currentTool.type === 'stroke_eraser' || currentTool.type === 'hand' ? 'pen' : 
+							currentTool.type === 'highlighter' ? 'highlighter' :
+							currentTool.type === 'eraser' ? 'eraser' : 'pen';
+			
+			await settingsStore.updateSection('drawing', {
+				defaultTool: toolType,
+				defaultBrushSize: currentTool.size,
+				defaultColor: currentColor
+			});
+		} catch (error) {
+			console.error('Failed to update default settings:', error);
+		}
+	}
+
+	async function resetToDefaults() {
+		try {
+			const drawingSettings = settingsStore.drawing;
+			drawingStore.setTool({
+				type: drawingSettings.defaultTool === 'highlighter' ? 'highlighter' : 
+					  drawingSettings.defaultTool === 'eraser' ? 'eraser' : 'pen',
+				size: drawingSettings.defaultBrushSize,
+				opacity: drawingSettings.defaultTool === 'highlighter' ? 0.5 : 1
+			});
+			drawingStore.setColor(drawingSettings.defaultColor);
+		} catch (error) {
+			console.error('Failed to reset to defaults:', error);
+		}
+	}
+
 	function zoomIn() {
 		const centerX = window.innerWidth / 2;
 		const centerY = window.innerHeight / 2;
@@ -69,7 +106,15 @@
 	function resetZoom() {
 		drawingStore.resetView();
 	}
+
+	function handleClickOutside(event: MouseEvent) {
+		if (showDefaultsPanel && defaultsPanelElement && !defaultsPanelElement.contains(event.target as Node)) {
+			showDefaultsPanel = false;
+		}
+	}
 </script>
+
+<svelte:window onclick={handleClickOutside} />
 
 <div class="flex items-center gap-4 p-3 bg-surface-container-high">
 	<!-- Collapse button -->
@@ -161,6 +206,53 @@
 		<Button variant="tonal" onclick={zoomIn} square title="Zoom in" aria-label="Zoom in">
 			+
 		</Button>
+	</div>
+
+	<!-- Drawing Defaults -->
+	<div class="flex items-center gap-2 border-l border-surface-container-low pl-4 relative">
+		<span class="text-sm font-medium">Defaults:</span>
+		<div class="flex items-center gap-1 text-xs text-on-surface-variant">
+			<span>
+				{settingsStore.drawing.defaultTool === 'pen' ? '✏️' : 
+				 settingsStore.drawing.defaultTool === 'highlighter' ? '🖍️' : '🧽'}
+			</span>
+			<span>{settingsStore.drawing.defaultBrushSize}px</span>
+			<div 
+				class="w-3 h-3 rounded border"
+				style="background-color: {settingsStore.drawing.defaultColor};"
+				title="Default color: {settingsStore.drawing.defaultColor}"
+			></div>
+		</div>
+		<Button 
+			variant="tonal" 
+			onclick={() => showDefaultsPanel = !showDefaultsPanel} 
+			aria-label="Toggle defaults panel"
+		>
+			⚙️
+		</Button>
+		{#if showDefaultsPanel}
+			<div 
+				bind:this={defaultsPanelElement}
+				class="flex items-center gap-2 bg-surface-container rounded-lg p-3 absolute right-0 top-full mt-2 z-50 shadow-lg border border-outline-variant whitespace-nowrap"
+			>
+				<Button 
+					variant="text" 
+					onclick={resetToDefaults}
+					title="Reset to default settings"
+					aria-label="Reset current tool to defaults"
+				>
+					Reset to Defaults
+				</Button>
+				<Button 
+					variant="text" 
+					onclick={setAsDefault}
+					title="Set current tool as default"
+					aria-label="Set current tool and color as defaults"
+				>
+					Set as Default
+				</Button>
+			</div>
+		{/if}
 	</div>
 
 	<!-- Actions -->

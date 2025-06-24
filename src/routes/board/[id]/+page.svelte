@@ -7,6 +7,7 @@
 	import { drawingStore } from '$lib/stores/drawing.svelte';
 	import { websocketStore } from '$lib/stores/websocket.svelte';
 	import { collaborationStore } from '$lib/stores/collaboration.svelte';
+	import { settingsStore } from '$lib/stores/settings.svelte';
 	import { apiService } from '$lib/services/api';
 	import type { Board } from '$lib/types';
 
@@ -187,6 +188,16 @@
 	onMount(() => {
 		// Set up the drawing store with the board ID
 		drawingStore.setBoardId(board.id);
+		
+		// Initialize drawing store with default settings
+		const drawingSettings = settingsStore.drawing;
+		drawingStore.setTool({
+			type: drawingSettings.defaultTool === 'highlighter' ? 'highlighter' : 
+				  drawingSettings.defaultTool === 'eraser' ? 'eraser' : 'pen',
+			size: drawingSettings.defaultBrushSize,
+			opacity: drawingSettings.defaultTool === 'highlighter' ? 0.5 : 1
+		});
+		drawingStore.setColor(drawingSettings.defaultColor);
 		
 		// Connect websocket handlers to stores
 		websocketStore.setDrawingEventHandler((event) => {
