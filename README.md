@@ -38,6 +38,8 @@ npm i -g concurrently
 
 Refer to ``.env.example`` for an example. Simply change the name to ``.env`` and change and variables you'd like. If you choose not to modify any values, everything shown in .env.example will be the default.
 
+> Ensure PUBLIC_PORT and PORT are the same if changed.
+
 **Need multiple origins for CORS? (Tailscale)**
 
 Modify your .env to include multiple origins, seperated by ``,``

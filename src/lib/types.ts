@@ -1,12 +1,14 @@
+import { PUBLIC_PORT } from '$env/static/public';
+
 export function getBaseURL(): string {
 	if (typeof window !== 'undefined') {
 		const protocol = window.location.protocol;
 		const hostname = window.location.hostname;
-		const port = hostname === 'localhost' ? '3001' : '';
+		const port = hostname === 'localhost' ? PUBLIC_PORT || '3001' : '';
 		return port ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`;
 	} else {
 		const host = process.env.API_HOST || 'localhost';
-		const port = process.env.API_PORT || '3001';
+		const port = process.env.API_PORT || PUBLIC_PORT || '3001';
 		const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
 		return `${protocol}://${host}:${port}`;
 	}

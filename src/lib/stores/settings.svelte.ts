@@ -163,7 +163,7 @@ class SettingsStore {
 	): Promise<void> {
 		const sectionUpdates = {
 			[section]: {
-				...this.#settings[section],
+				...(this.#settings[section] as object),
 				...updates
 			}
 		} as Partial<AppSettings>;
