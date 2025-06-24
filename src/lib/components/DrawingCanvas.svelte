@@ -18,14 +18,10 @@
 	let isMouseDown = false; // Track global mouse state
 
 	onMount(() => {
-		// Set up canvas
-		setupCanvas();
-		
-		// Handle window resize
-		const handleResize = () => {
+		// Set up canvas immediately with fixed dimensions
+		if (canvas) {
 			setupCanvas();
-		};
-		window.addEventListener('resize', handleResize);
+		}
 		
 		// Global mouse event listeners to track mouse state even when cursor leaves canvas
 		const handleGlobalMouseUp = (event: Event) => {
@@ -53,33 +49,24 @@
 		window.addEventListener('mouseup', handleGlobalMouseUp);
 		window.addEventListener('touchend', handleGlobalTouchEnd);
 		
-		// Use ResizeObserver for better container size detection
-		const resizeObserver = new ResizeObserver(() => {
-			setupCanvas();
-		});
-		
-		if (canvasContainer) {
-			resizeObserver.observe(canvasContainer);
-		}
-		
 		return () => {
-			window.removeEventListener('resize', handleResize);
 			window.removeEventListener('mouseup', handleGlobalMouseUp);
 			window.removeEventListener('touchend', handleGlobalTouchEnd);
-			resizeObserver.disconnect();
 		};
 	});
 
 	function setupCanvas() {
-		if (!canvas || !canvasContainer) return;
+		if (!canvas) return;
 		
-		const rect = canvasContainer.getBoundingClientRect();
+		// Use fixed viewport dimensions for immediate sizing
+		const width = window.innerWidth;
+		const height = window.innerHeight;
 		
-		// Set canvas size to exactly match container
-		canvas.width = rect.width * window.devicePixelRatio;
-		canvas.height = rect.height * window.devicePixelRatio;
-		canvas.style.width = rect.width + 'px';
-		canvas.style.height = rect.height + 'px';
+		// Set canvas size with device pixel ratio for crisp rendering
+		canvas.width = width * window.devicePixelRatio;
+		canvas.height = height * window.devicePixelRatio;
+		canvas.style.width = width + 'px';
+		canvas.style.height = height + 'px';
 		
 		const ctx = canvas.getContext('2d');
 		if (ctx) {
@@ -104,7 +91,7 @@
 		event.preventDefault();
 		isMouseDown = true;
 		isDrawing = true;
-		
+        
 		const point = getEventPoint(event);
 		lastPoint = point;
 		drawingStore.startStroke(point);
@@ -177,12 +164,13 @@
 
 <div 
 	bind:this={canvasContainer}
-	class="absolute inset-0 cursor-crosshair grid-background"
+	class="fixed inset-0 cursor-crosshair grid-background"
 	style="touch-action: none;"
 >
 	<canvas
 		bind:this={canvas}
-		class="absolute inset-0 block w-full h-full bg-transparent"
+		class="fixed inset-0 block bg-transparent"
+		style="width: 100vw; height: 100vh;"
 		onmousedown={handlePointerDown}
 		onmousemove={handlePointerMove}
 		onmouseup={handlePointerUp}
@@ -203,3 +191,4 @@
 		background-size: 20px 20px;
 	}
 </style>
+

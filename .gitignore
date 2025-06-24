@@ -8,6 +8,8 @@ db.sqlite
 .wrangler
 /.svelte-kit
 /build
+api/api.log
+api/portaldraw.sqlite
 
 # Compiled files
 api/dist/
