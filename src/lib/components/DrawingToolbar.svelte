@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Button } from 'm3-svelte';
 	import { drawingStore } from '$lib/stores/drawing.svelte';
+	import { settingsStore } from '$lib/stores/settings.svelte';
+	import { slide, fly, scale } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
 	import type { DrawingTool } from '$lib/types';
 
 	interface Props {
@@ -9,6 +12,9 @@
 	}
 
 	let { toolbarCollapsed, toggleToolbar }: Props = $props();
+
+	// Reactive variables for animation settings
+	let animateTransitions = $derived(settingsStore.ui.animateTransitions);
 
 	const tools: { type: DrawingTool['type']; label: string; icon: string }[] = [
 		{ type: 'hand', label: 'Hand', icon: '✋' },
@@ -77,16 +83,22 @@
 
 </script>
 
-<div class="flex items-center gap-4 p-3 bg-surface-container-high">
+<div 
+	class="flex items-center gap-4 p-3 bg-surface-container-high"
+	{...animateTransitions ? { in: slide, params: { duration: 300, easing: quintOut } } : {}}
+>
 	<!-- Collapse button -->
 	<Button variant="tonal" onclick={toggleToolbar} square title="Collapse toolbar" aria-label="Collapse toolbar">
 		↑
 	</Button>
 	
 	<!-- Tools -->
-	<div class="flex items-center gap-2">
+	<div 
+		class="flex items-center gap-2"
+		{...animateTransitions ? { in: fly, params: { x: -20, duration: 400, delay: 100, easing: quintOut } } : {}}
+	>
 		<span class="text-sm font-medium">Tools:</span>
-		{#each tools as tool}
+		{#each tools as tool, index}
 			<Button
 				variant={currentTool.type === tool.type ? 'filled' : 'tonal'}
 				onclick={() => selectTool(tool.type)}
@@ -101,7 +113,15 @@
 
 	<!-- Size (hide for hand tool) -->
 	{#if currentTool.type !== 'hand'}
-		<div class="flex items-center gap-2">
+		<div 
+			class="flex items-center gap-2"
+			{...animateTransitions ? { 
+				in: fly, 
+				params: { x: -20, duration: 400, delay: 200, easing: quintOut },
+				out: scale,
+				outparams: { duration: 200, easing: quintOut }
+			} : {}}
+		>
 			<span class="text-sm font-medium">
 				{#if currentTool.type === 'stroke_eraser'}
 					Detection radius:
@@ -130,12 +150,20 @@
 
 	<!-- Colors (hide for hand tool and erasers) -->
 	{#if currentTool.type !== 'hand' && currentTool.type !== 'eraser' && currentTool.type !== 'stroke_eraser'}
-		<div class="flex items-center gap-2">
+		<div 
+			class="flex items-center gap-2"
+			{...animateTransitions ? { 
+				in: fly, 
+				params: { x: -20, duration: 400, delay: 300, easing: quintOut },
+				out: scale,
+				outparams: { duration: 200, easing: quintOut }
+			} : {}}
+		>
 			<span class="text-sm font-medium">Color:</span>
 			{#each colors as color}
 				<button
 					type="button"
-					class="w-8 h-8 rounded border-2 {currentColor === color ? 'border-gray-400' : 'border-gray-200'}"
+					class="w-8 h-8 rounded border-2 {currentColor === color ? 'border-gray-400' : 'border-gray-200'} transition-all duration-200 hover:scale-105"
 					style="background-color: {color};"
 					onclick={() => selectColor(color)}
 					title={color}
@@ -148,7 +176,7 @@
 				type="color"
 				value={currentColor}
 				onchange={(e) => selectColor(e.currentTarget.value)}
-				class="w-8 h-8 rounded border-2 border-gray-200 cursor-pointer"
+				class="w-8 h-8 rounded border-2 border-gray-200 cursor-pointer transition-all duration-200 hover:scale-105"
 				title="Custom color"
 				aria-label="Select custom color"
 			/>
@@ -156,7 +184,10 @@
 	{/if}
 
 	<!-- Zoom controls -->
-	<div class="flex items-center gap-2">
+	<div 
+		class="flex items-center gap-2"
+		{...animateTransitions ? { in: fly, params: { x: -20, duration: 400, delay: 400, easing: quintOut } } : {}}
+	>
 		<span class="text-sm font-medium">Zoom:</span>
 		<Button variant="tonal" onclick={zoomOut} square title="Zoom out" aria-label="Zoom out">
 			−
@@ -170,7 +201,10 @@
 	</div>
 
 	<!-- Actions -->
-	<div class="flex items-center gap-2 ml-auto">
+	<div 
+		class="flex items-center gap-2 ml-auto"
+		{...animateTransitions ? { in: fly, params: { x: -20, duration: 400, delay: 500, easing: quintOut } } : {}}
+	>
 		<Button variant="tonal" onclick={() => drawingStore.undo()} aria-label="Undo last action">
 			Undo
 		</Button>

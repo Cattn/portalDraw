@@ -9,6 +9,8 @@
 	import { collaborationStore } from '$lib/stores/collaboration.svelte';
 	import { settingsStore } from '$lib/stores/settings.svelte';
 	import { apiService } from '$lib/services/api';
+	import { fade, fly, slide, scale } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
 	import type { Board } from '$lib/types';
 
 	let { data }: { data: { board: Board } } = $props();
@@ -34,6 +36,9 @@
 	let connected = $state(false);
 	let connecting = $state(false);
 	let wsError = $state<string | null>(null);
+
+	// Reactive variables for animation settings
+	let animateTransitions = $derived(settingsStore.ui.animateTransitions);
 	
 	// Update reactive variables when websocket state changes
 	$effect(() => {
@@ -259,7 +264,10 @@
 <!-- Fullscreen container with no padding/margin -->
 <div class="fixed inset-0 pr-20 flex flex-col bg-surface-container-high overflow-hidden">
 	<!-- Top toolbar - compact header -->
-	<header class="flex items-center justify-between px-4 py-2 border-b border-surface-container-low bg-surface-container-high z-20 flex-shrink-0">
+	<header 
+		class="flex items-center justify-between px-4 py-2 border-b border-surface-container-low bg-surface-container-high z-20 flex-shrink-0"
+		{...animateTransitions ? { in: slide, params: { duration: 300, easing: quintOut } } : {}}
+	>
 		<div class="flex items-center gap-3">
 			<Button variant="outlined" onclick={goBack}>
 				← Back
@@ -358,7 +366,15 @@
 
 	<!-- Drawing toolbar - compact -->
 	{#if !toolbarCollapsed}
-		<div class="border-b border-surface-container-low bg-surface-container-high z-20 flex-shrink-0">
+		<div 
+			class="border-b border-surface-container-low bg-surface-container-high z-20 flex-shrink-0"
+			{...animateTransitions ? { 
+				in: slide, 
+				params: { duration: 300, easing: quintOut },
+				out: slide,
+				outparams: { duration: 200, easing: quintOut }
+			} : {}}
+		>
 			<DrawingToolbar {toolbarCollapsed} {toggleToolbar} />
 		</div>
 	{/if}

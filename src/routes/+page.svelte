@@ -2,15 +2,20 @@
 	import { Button } from 'm3-svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { fade, fly, scale } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+	import { quintOut } from 'svelte/easing';
 
 	import type { Board } from '$lib/types';
 	import { apiService } from '$lib/services/api';
+	import { settingsStore } from '$lib/stores/settings.svelte';
+	import { transitions, cssTransitions } from '$lib/utils';
 
-	export let data: App.PageData;
+	let { data }: { data: App.PageData } = $props();
 	
-	let boards: Board[] = data.boards || [];
-	let isCreating = false;
-	let isDeleting = false;
+	let boards = $state<Board[]>(data.boards || []);
+	let isCreating = $state(false);
+	let isDeleting = $state(false);
 
 	async function createBoard() {
 		if (isCreating) return;
@@ -56,9 +61,17 @@
 </script>
 
 <div class="p-4">
-	<h1 class="text-2xl font-bold mb-4">Collaborative Drawing Boards</h1>
+	<h1 
+		class="text-2xl font-bold mb-4"
+		{...transitions.fade({ duration: 500, delay: 100 })}
+	>
+		Collaborative Drawing Boards
+	</h1>
 	
-	<div class="mb-4">
+	<div 
+		class="mb-4"
+		{...transitions.fly({ y: 20, duration: 400, delay: 200 })}
+	>
 		<Button 
 			variant="filled" 
 			onclick={createBoard}
@@ -70,8 +83,12 @@
 	
 	{#if boards.length > 0}
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-			{#each boards as board}
-				<div class="border rounded-lg p-4">
+			{#each boards as board, index (board.id)}
+				<div 
+					class="border rounded-lg p-4 {cssTransitions.card}"
+					{...transitions.staggeredFly(index, { baseDelay: 300, stagger: 100, y: 30 })}
+					{...transitions.flip()}
+				>
 					<h3 class="font-semibold">{board.name}</h3>
 					{#if board.description}
 						<p class="text-gray-600 text-sm">{board.description}</p>
@@ -98,6 +115,11 @@
 			{/each}
 		</div>
 	{:else}
-		<p class="text-gray-500">No boards yet. Create your first collaborative drawing board!</p>
+		<p 
+			class="text-gray-500"
+			{...transitions.fade({ duration: 400, delay: 300 })}
+		>
+			No boards yet. Create your first collaborative drawing board!
+		</p>
 	{/if}
 </div>

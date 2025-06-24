@@ -6,6 +6,9 @@
 	} from 'm3-svelte';
 	import { goto } from '$app/navigation';
 	import { settingsStore } from '$lib/stores/settings.svelte';
+	import { fade, fly, slide, scale } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+	import { quintOut, cubicOut } from 'svelte/easing';
 
 	// Settings state
 	let currentTab = $state('drawing');
@@ -202,7 +205,10 @@
 
 <div class="max-w-4xl mx-auto p-6 space-y-6">
 	<!-- Header -->
-	<div class="flex items-center justify-between">
+	<div 
+		class="flex items-center justify-between"
+		{...animateTransitions ? { in: fade, params: { duration: 500, delay: 100 } } : {}}
+	>
 		<div>
 			<h1 class="m3-font-display-large">Settings</h1>
 			<p class="m3-font-body-medium text-on-surface-variant mt-2">
@@ -215,9 +221,13 @@
 	</div>
 
 	<!-- Navigation -->
-	<Card variant="elevated" class="p-4">
+	<Card 
+		variant="elevated" 
+		class="p-4"
+		{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } } : {}}
+	>
 		<div class="flex flex-wrap gap-2">
-			{#each tabs as tab}
+			{#each tabs as tab, index (tab.id)}
 				<Button
 					variant={currentTab === tab.id ? 'filled' : 'outlined'}
 					onclick={() => currentTab = tab.id}
@@ -230,8 +240,15 @@
 
 	<!-- Drawing Settings -->
 	{#if currentTab === 'drawing'}
-		<div class="space-y-4">
-			<Card variant="elevated" class="p-6">
+		<div 
+			class="space-y-4"
+			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
+		>
+			<Card 
+				variant="elevated" 
+				class="p-6"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } } : {}}
+			>
 				<h2 class="m3-font-headline-small mb-4">Default Drawing Tools</h2>
 				
 				<div class="space-y-4">
@@ -282,7 +299,11 @@
 				</div>
 			</Card>
 
-			<Card variant="elevated" class="p-6">
+			<Card 
+				variant="elevated" 
+				class="p-6"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } } : {}}
+			>
 				<h2 class="m3-font-headline-small mb-4">Drawing Behavior</h2>
 				
 				<div class="space-y-4">
@@ -313,8 +334,15 @@
 
 	<!-- UI Settings -->
 	{#if currentTab === 'ui'}
-		<div class="space-y-4">
-			<Card variant="elevated" class="p-6">
+		<div 
+			class="space-y-4"
+			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
+		>
+			<Card 
+				variant="elevated" 
+				class="p-6"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } } : {}}
+			>
 				<h2 class="m3-font-headline-small mb-4">Appearance</h2>
 				
 				<div class="space-y-4">
@@ -366,8 +394,15 @@
 
 	<!-- Collaboration Settings -->
 	{#if currentTab === 'collaboration'}
-		<div class="space-y-4">
-			<Card variant="elevated" class="p-6">
+		<div 
+			class="space-y-4"
+			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
+		>
+			<Card 
+				variant="elevated" 
+				class="p-6"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } } : {}}
+			>
 				<h2 class="m3-font-headline-small mb-4">Multiplayer Experience</h2>
 				
 				<div class="space-y-4">
@@ -419,8 +454,15 @@
 
 	<!-- Account Settings -->
 	{#if currentTab === 'account'}
-		<div class="space-y-4">
-			<Card variant="elevated" class="p-6">
+		<div 
+			class="space-y-4"
+			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
+		>
+			<Card 
+				variant="elevated" 
+				class="p-6"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } } : {}}
+			>
 				<h2 class="m3-font-headline-small mb-4">Profile Information</h2>
 				
 				<div class="space-y-4">
@@ -440,7 +482,11 @@
 				</div>
 			</Card>
 
-			<Card variant="elevated" class="p-6">
+			<Card 
+				variant="elevated" 
+				class="p-6"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } } : {}}
+			>
 				<h2 class="m3-font-headline-small mb-4">Data Management</h2>
 				
 				<div class="space-y-4">
@@ -465,8 +511,15 @@
 
 	<!-- Accessibility Settings -->
 	{#if currentTab === 'accessibility'}
-		<div class="space-y-4">
-			<Card variant="elevated" class="p-6">
+		<div 
+			class="space-y-4"
+			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
+		>
+			<Card 
+				variant="elevated" 
+				class="p-6"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } } : {}}
+			>
 				<h2 class="m3-font-headline-small mb-4">Visual Accessibility</h2>
 				
 				<div class="space-y-4">
@@ -514,7 +567,11 @@
 				</div>
 			</Card>
 
-			<Card variant="elevated" class="p-6">
+			<Card 
+				variant="elevated" 
+				class="p-6"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } } : {}}
+			>
 				<h2 class="m3-font-headline-small mb-4">Input & Navigation</h2>
 				
 				<div class="space-y-4">
@@ -544,7 +601,10 @@
 	{/if}
 
 	<!-- Action Buttons -->
-	<div class="flex gap-4 justify-end pt-6 border-t border-outline-variant">
+	<div 
+		class="flex gap-4 justify-end pt-6 border-t border-outline-variant"
+		{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 300, easing: quintOut } } : {}}
+	>
 		<Button variant="outlined" onclick={resetToDefaults}>
 			Reset to Defaults
 		</Button>

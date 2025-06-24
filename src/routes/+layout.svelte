@@ -4,6 +4,8 @@
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import { settingsStore } from '$lib/stores/settings.svelte';
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
 	import type { AppSettings } from '$lib/types';
 
 	interface LayoutData {
@@ -11,6 +13,9 @@
 	}
 
 	let { children, data }: { children: any; data: LayoutData } = $props();
+
+	// Reactive variables for animation settings
+	let animateTransitions = $derived(settingsStore.ui?.animateTransitions ?? true);
 
 	// Initialize settings store with server-loaded data
 	onMount(() => {
@@ -45,7 +50,10 @@
 	}
 </script>
 
-<div class="h-screen pr-20">
+<div 
+	class="h-screen pr-20"
+	{...animateTransitions ? { in: fade, params: { duration: 400, easing: quintOut } } : {}}
+>
 	{@render children()}
 	<Sidebar />
 </div>
