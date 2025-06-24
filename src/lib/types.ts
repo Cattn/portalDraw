@@ -14,7 +14,16 @@ export function getBaseURL(): string {
 		
 		return port !== defaultPort ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`;
 	} else {
-		// Server-side: Connect directly to local API server using the actual PORT it runs on
+		// Server-side: In production, use same domain as frontend. In development, use localhost
+		if (process.env.NODE_ENV === 'production') {
+			const publicPort = process.env.PUBLIC_PORT || '3001';
+			// Check if we're on a server with a domain name
+			if (process.env.HOST && process.env.HOST !== 'localhost' && process.env.HOST !== '127.0.0.1') {
+				// Use the same protocol/domain that nginx is serving, but connect to public port
+				return `http://localhost:${publicPort}`;
+			}
+		}
+		// Development fallback: Connect directly to local API server using the actual PORT it runs on
 		const apiPort = process.env.PORT || '3001';
 		return `http://localhost:${apiPort}`;
 	}
