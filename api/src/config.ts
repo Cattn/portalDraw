@@ -6,8 +6,9 @@ dotenv.config({ path: path.join(__dirname, '../../.env') });
 const parseOrigins = (originsString: string): string | string[] => {
   const origins = originsString.split(',').map(origin => origin.trim());
   
-  // Only add localhost origins in development
-  if (process.env.NODE_ENV !== 'production') {
+  // Only add localhost origins in development (when not using HTTPS domains)
+  const isProduction = originsString.includes('https://');
+  if (!isProduction) {
     origins.push('http://localhost:5024'); 
     origins.push('http://localhost:5173'); 
   }

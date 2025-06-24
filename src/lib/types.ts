@@ -14,22 +14,23 @@ export function getBaseURL(): string {
 		
 		return port !== defaultPort ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`;
 	} else {
-		// Server-side: Use the same URL as the client would use
-		if (process.env.NODE_ENV === 'production') {
+		// Server-side: Detect production by checking for CORS_ORIGIN with domain
+		const corsOrigin = process.env.CORS_ORIGIN;
+		const isProduction = corsOrigin && corsOrigin.includes('https://');
+		
+		if (isProduction) {
 			// In production, determine protocol and hostname from CORS_ORIGIN
-			const corsOrigin = process.env.CORS_ORIGIN;
-			if (corsOrigin) {
-				const firstOrigin = corsOrigin.split(',')[0].trim();
-				const url = new URL(firstOrigin);
-				const publicPort = process.env.PUBLIC_PORT || '3001';
-				
-				// Use the same protocol and hostname, with the public port
-				if (url.protocol === 'https:' && publicPort === '443') {
-					return `${url.protocol}//${url.hostname}`;
-				}
-				return `${url.protocol}//${url.hostname}:${publicPort}`;
+			const firstOrigin = corsOrigin.split(',')[0].trim();
+			const url = new URL(firstOrigin);
+			const publicPort = process.env.PUBLIC_PORT || '3001';
+			
+			// Use the same protocol and hostname, with the public port
+			if (url.protocol === 'https:' && publicPort === '443') {
+				return `${url.protocol}//${url.hostname}`;
 			}
+			return `${url.protocol}//${url.hostname}:${publicPort}`;
 		}
+		
 		// Development fallback
 		const apiPort = process.env.PORT || '3001';
 		return `http://localhost:${apiPort}`;
