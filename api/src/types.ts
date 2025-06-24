@@ -8,14 +8,6 @@ export interface Board {
 	is_public: boolean;
 }
 
-export interface Stroke {
-    id: number;
-    boardId: number;
-    points: string;
-    color: string;
-    width: number;
-}
-
 export interface DrawingEvent {
 	id: string;
 	boardId: string;
@@ -71,4 +63,4 @@ export interface WebSocketMessage {
 	boardId: string;
 	sessionId: string;
 	timestamp: number;
-}
+} 

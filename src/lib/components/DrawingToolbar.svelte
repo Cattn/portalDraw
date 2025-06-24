@@ -1,177 +1,116 @@
 <script lang="ts">
-	import { Button, Slider } from 'm3-svelte';
-	
-	export let onColorChange: (color: string) => void = () => {};
-	export let onWidthChange: (width: number) => void = () => {};
-	export let onUndo: () => void = () => {};
-	export let onClear: () => void = () => {};
-	export let onSave: () => void = () => {};
-	export let onZoomIn: () => void = () => {};
-	export let onZoomOut: () => void = () => {};
-	export let onResetView: () => void = () => {};
-	export let currentZoom: number = 1;
+	import { Button } from 'm3-svelte';
+	import { drawingStore } from '$lib/stores/drawing.svelte';
+	import type { DrawingTool } from '$lib/types';
 
-	let selectedColor = '#6B4FE8';
-	let brushWidth = 3;
-
-	const colors = [
-		'#6B4FE8', // Primary
-		'#E91E63', // Pink
-		'#4CAF50', // Green
-		'#FF9800', // Orange
-		'#2196F3', // Blue
-		'#9C27B0', // Purple
-		'#F44336', // Red
-		'#795548', // Brown
-		'#607D8B', // Blue Grey
-		'#000000', // Black
+	const tools: { type: DrawingTool['type']; label: string; icon: string }[] = [
+		{ type: 'pen', label: 'Pen', icon: '✏️' },
+		{ type: 'highlighter', label: 'Highlighter', icon: '🖍️' },
+		{ type: 'eraser', label: 'Eraser', icon: '🧽' }
 	];
 
-	function selectColor(color: string) {
-		selectedColor = color;
-		onColorChange(color);
+	const sizes = [1, 2, 4, 8, 16];
+	const colors = ['#000000', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffa500'];
+
+	function selectTool(type: DrawingTool['type']) {
+		drawingStore.setTool({
+			...drawingStore.currentTool,
+			type,
+			opacity: type === 'highlighter' ? 0.5 : 1
+		});
 	}
 
-	$: onWidthChange(brushWidth);
+	function selectSize(size: number) {
+		drawingStore.setTool({
+			...drawingStore.currentTool,
+			size
+		});
+	}
+
+	function selectColor(color: string) {
+		drawingStore.setColor(color);
+	}
 </script>
 
-<div class="toolbar">
-	<div class="section">
-		<h3 class="m3-title-small">Tools</h3>
-		<div class="tool-buttons">
-			<Button variant="outlined" click={onUndo}>
-				↶ Undo
+<div class="flex items-center gap-4 p-3">
+	<!-- Tools -->
+	<div class="flex items-center gap-2">
+		<span class="text-sm font-medium">Tools:</span>
+		{#each tools as tool}
+			<Button
+				variant={drawingStore.currentTool.type === tool.type ? 'filled' : 'outlined'}
+				onclick={() => selectTool(tool.type)}
+				square
+				title={tool.label}
+				aria-label={tool.label}
+			>
+				{tool.icon}
 			</Button>
-			<Button variant="outlined" click={onClear}>
-				🗑️ Clear
-			</Button>
-			<Button variant="filled" click={onSave}>
-				💾 Save
-			</Button>
-		</div>
+		{/each}
 	</div>
 
-	<div class="section">
-		<h3 class="m3-title-small">View</h3>
-		<div class="view-controls">
-			<div class="zoom-controls">
-				<Button variant="outlined" click={onZoomOut}>−</Button>
-				<span class="m3-body-small">{Math.round(currentZoom * 100)}%</span>
-				<Button variant="outlined" click={onZoomIn}>+</Button>
-			</div>
-			<Button variant="outlined" click={onResetView}>Reset View</Button>
-		</div>
+	<!-- Size -->
+	<div class="flex items-center gap-2">
+		<span class="text-sm font-medium">Size:</span>
+		{#each sizes as size}
+			<Button
+				variant={drawingStore.currentTool.size === size ? 'filled' : 'outlined'}
+				onclick={() => selectSize(size)}
+				square
+				title={`Size ${size}`}
+				aria-label={`Brush size ${size}`}
+			>
+				<div 
+					class="rounded-full bg-current"
+					style="width: {Math.min(size * 2, 16)}px; height: {Math.min(size * 2, 16)}px;"
+				></div>
+			</Button>
+		{/each}
 	</div>
 
-	<div class="section">
-		<h3 class="m3-title-small">Brush Size</h3>
-		<div class="brush-size">
-			<Slider
-				min={1}
-				max={20}
-				step={1}
-				bind:value={brushWidth}
-			/>
-			<span class="m3-body-medium">{brushWidth}px</span>
-		</div>
+	<!-- Colors -->
+	<div class="flex items-center gap-2">
+		<span class="text-sm font-medium">Color:</span>
+		{#each colors as color}
+			<button
+				type="button"
+				class="w-8 h-8 rounded border-2 {drawingStore.currentColor === color ? 'border-gray-400' : 'border-gray-200'}"
+				style="background-color: {color};"
+				onclick={() => selectColor(color)}
+				title={color}
+				aria-label={`Select color ${color}`}
+			></button>
+		{/each}
+		
+		<!-- Custom color picker -->
+		<input
+			type="color"
+			value={drawingStore.currentColor}
+			onchange={(e) => selectColor(e.currentTarget.value)}
+			class="w-8 h-8 rounded border-2 border-gray-200 cursor-pointer"
+			title="Custom color"
+			aria-label="Select custom color"
+		/>
 	</div>
 
-	<div class="section">
-		<h3 class="m3-title-small">Colors</h3>
-		<div class="color-palette">
-			{#each colors as color}
-				<button
-					class="color-button"
-					class:selected={selectedColor === color}
-					style="background-color: {color};"
-					onclick={() => selectColor(color)}
-					aria-label="Select color {color}"
-				></button>
-			{/each}
-		</div>
+	<!-- Actions -->
+	<div class="flex items-center gap-2 ml-auto">
+		<Button variant="outlined" onclick={() => drawingStore.undo()} aria-label="Undo last action">
+			Undo
+		</Button>
+		<Button variant="outlined" onclick={() => drawingStore.redo()} aria-label="Redo last action">
+			Redo
+		</Button>
+		<Button 
+			variant="outlined" 
+			onclick={() => {
+				if (confirm('Clear the entire canvas? This action cannot be undone.')) {
+					drawingStore.clear();
+				}
+			}}
+			aria-label="Clear entire canvas"
+		>
+			Clear
+		</Button>
 	</div>
 </div>
-
-<style>
-	.toolbar {
-		padding: 1rem;
-		background: rgb(var(--m3-scheme-surface-container));
-		border-radius: var(--m3-util-rounding-large);
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-		min-width: 200px;
-		max-width: 250px;
-		height: fit-content;
-		box-shadow: var(--m3-util-elevation-2);
-	}
-
-	.section {
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-	}
-
-	.tool-buttons {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.view-controls {
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-	}
-
-	.zoom-controls {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.5rem;
-	}
-
-	.zoom-controls span {
-		min-width: 45px;
-		text-align: center;
-		font-weight: 500;
-	}
-
-	.brush-size {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		align-items: center;
-	}
-
-	.color-palette {
-		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		gap: 0.5rem;
-	}
-
-	.color-button {
-		width: 32px;
-		height: 32px;
-		border: 2px solid transparent;
-		border-radius: var(--m3-util-rounding-small);
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.color-button:hover {
-		transform: scale(1.1);
-		box-shadow: var(--m3-util-elevation-1);
-	}
-
-	.color-button.selected {
-		border-color: rgb(var(--m3-scheme-primary));
-		box-shadow: var(--m3-util-elevation-2);
-		transform: scale(1.1);
-	}
-
-	h3 {
-		margin: 0;
-		color: rgb(var(--m3-scheme-on-surface));
-	}
-</style> 

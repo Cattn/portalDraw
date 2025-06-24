@@ -1,0 +1,245 @@
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:08:27.853Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:08:27.868Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:08:27.885Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:08:27.903Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:08:27.903Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:09:23.333Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:09:23.336Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:09:23.336Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:09:23.336Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:09:23.337Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:09:48.860Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:09:48.863Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:09:48.863Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:09:48.864Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:09:48.864Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:09:48.868Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:09:48.879Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:09:48.879Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:09:48.880Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:10:12.253Z"}
+{"ip":"::1","level":"info","message":"POST /api/boards","method":"POST","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:11:00.405Z"}
+{"ip":"::1","level":"info","message":"POST /api/boards","method":"POST","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:11:11.424Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:11:19.638Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:11:19.641Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:11:19.641Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:11:19.642Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:11:19.642Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:11:19.645Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:11:19.655Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:11:19.655Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:11:19.655Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:13:38.358Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:13:41.348Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:15:52.783Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:15:53.632Z"}
+{"ip":"::1","level":"info","message":"POST /api/boards","method":"POST","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:16:00.090Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/5eb7d586-b47b-4380-84d6-2e649a0fd2cc","method":"GET","path":"/api/boards/5eb7d586-b47b-4380-84d6-2e649a0fd2cc","query":{},"timestamp":"2025-06-23T23:16:36.348Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/5eb7d586-b47b-4380-84d6-2e649a0fd2cc","method":"GET","path":"/api/boards/5eb7d586-b47b-4380-84d6-2e649a0fd2cc","query":{},"timestamp":"2025-06-23T23:17:24.187Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:17:25.294Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:17:26.234Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:17:34.162Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:18:03.333Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:18:03.484Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:22:31.132Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:22:38.905Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:22:40.831Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:22:41.661Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:22:42.737Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully...","timestamp":"2025-06-23T23:22:45.578Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:22:48.265Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:22:48.268Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:22:48.268Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:22:48.269Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:22:48.269Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:22:48.272Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:22:48.283Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:22:48.284Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:22:48.284Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:22:48.303Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:22:48.914Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:22:51.182Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:22:51.841Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:22:57.947Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:22:59.780Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully...","timestamp":"2025-06-23T23:24:59.644Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:25:02.825Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:25:02.828Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:25:02.829Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:25:02.829Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:25:02.829Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:25:02.832Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:25:02.842Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:25:02.842Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:25:02.843Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:25:04.662Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:25:05.880Z"}
+{"level":"info","message":"HTTP server closed","timestamp":"2025-06-23T23:25:06.020Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:25:06.213Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:25:12.851Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:26:06.115Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:26:06.118Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:26:06.118Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:26:06.119Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:26:06.119Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:26:06.122Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:26:06.132Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:26:06.133Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:26:06.133Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:26:44.848Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:26:44.851Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:26:44.852Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:26:44.852Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:26:44.852Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:26:44.856Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:26:44.867Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:26:44.867Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:26:44.867Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully...","timestamp":"2025-06-23T23:27:25.817Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:27:28.627Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:27:28.629Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:27:28.630Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:27:28.631Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:27:28.631Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:27:28.634Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:27:28.644Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:27:28.644Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:27:28.645Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:27:30.366Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:27:31.752Z"}
+{"level":"info","message":"HTTP server closed","timestamp":"2025-06-23T23:27:31.888Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:27:58.075Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:27:59.623Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:31:02.567Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully...","timestamp":"2025-06-23T23:31:08.346Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:31:11.046Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:31:11.049Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:31:11.050Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:31:11.050Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:31:11.050Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:31:11.054Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:31:11.064Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:31:11.064Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:31:11.065Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:31:11.100Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:31:11.810Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:31:14.288Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:31:15.383Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:32:05.324Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:32:05.485Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:35:02.978Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully...","timestamp":"2025-06-23T23:38:23.398Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:38:25.963Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:38:25.966Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:38:25.966Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:38:25.967Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:38:25.967Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:38:25.971Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:38:25.981Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:38:25.981Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:38:25.981Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:38:26.145Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:38:26.849Z"}
+{"level":"info","message":"HTTP server closed","timestamp":"2025-06-23T23:38:27.012Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:39:32.019Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:39:33.038Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:39:54.178Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully...","timestamp":"2025-06-23T23:43:56.676Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:43:59.417Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:43:59.422Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:43:59.422Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:43:59.423Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:43:59.423Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:43:59.428Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:43:59.438Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:43:59.438Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:43:59.438Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:43:59.458Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:44:00.177Z"}
+{"level":"info","message":"HTTP server closed","timestamp":"2025-06-23T23:44:00.347Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:45:22.992Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:45:22.995Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:45:22.995Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:45:22.996Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:45:22.996Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:45:22.999Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:45:23.010Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:45:23.010Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:45:23.010Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:45:30.706Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:45:31.848Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully...","timestamp":"2025-06-23T23:46:00.126Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:46:02.721Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:46:02.723Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:46:02.724Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:46:02.724Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:46:02.724Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:46:02.728Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:46:02.738Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:46:02.738Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:46:02.738Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:46:02.861Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:46:03.586Z"}
+{"level":"info","message":"HTTP server closed","timestamp":"2025-06-23T23:46:03.773Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:46:09.994Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:46:12.170Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:46:18.202Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:46:19.857Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:48:10.171Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:48:11.524Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully...","timestamp":"2025-06-23T23:48:28.240Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:48:30.757Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:48:30.760Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:48:30.761Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:48:30.761Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:48:30.761Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:48:30.765Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:48:30.775Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:48:30.775Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:48:30.775Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:48:30.995Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:48:31.709Z"}
+{"level":"info","message":"HTTP server closed","timestamp":"2025-06-23T23:48:31.868Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:49:45.863Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:49:46.733Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:49:48.991Z"}
+{"level":"info","message":"SIGINT received, shutting down gracefully...","timestamp":"2025-06-23T23:53:01.520Z"}
+{"level":"info","message":"Connected to SQLite database","timestamp":"2025-06-23T23:53:04.415Z"}
+{"level":"info","message":"Migration 001-create-boards.sql completed","timestamp":"2025-06-23T23:53:04.418Z"}
+{"level":"info","message":"Migration 002-create-drawing-events.sql completed","timestamp":"2025-06-23T23:53:04.419Z"}
+{"level":"info","message":"Migration 003-create-board-sessions.sql completed","timestamp":"2025-06-23T23:53:04.419Z"}
+{"level":"info","message":"Database initialized successfully","timestamp":"2025-06-23T23:53:04.419Z"}
+{"level":"info","message":"WebSocket handler initialized","timestamp":"2025-06-23T23:53:04.423Z"}
+{"level":"info","message":"🚀 PortalDraw API server running on http://localhost:3001","timestamp":"2025-06-23T23:53:04.433Z"}
+{"level":"info","message":"📡 WebSocket server ready for connections","timestamp":"2025-06-23T23:53:04.433Z"}
+{"level":"info","message":"💾 Database: portaldraw.sqlite","timestamp":"2025-06-23T23:53:04.433Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:53:06.958Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:53:07.481Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:53:07.977Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:53:18.840Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:53:37.008Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:54:21.396Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:54:35.194Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:54:38.136Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:54:48.005Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:54:49.149Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/87bdef6f-03e8-4c91-8437-054b5bb92696","method":"GET","path":"/api/boards/87bdef6f-03e8-4c91-8437-054b5bb92696","query":{},"timestamp":"2025-06-23T23:54:50.128Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/87bdef6f-03e8-4c91-8437-054b5bb92696","method":"GET","path":"/api/boards/87bdef6f-03e8-4c91-8437-054b5bb92696","query":{},"timestamp":"2025-06-23T23:54:50.973Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:54:56.441Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:54:57.324Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/2fbdc473-48c5-4657-9035-1331e463f116","method":"GET","path":"/api/boards/2fbdc473-48c5-4657-9035-1331e463f116","query":{},"timestamp":"2025-06-23T23:54:58.267Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/87bdef6f-03e8-4c91-8437-054b5bb92696","method":"GET","path":"/api/boards/87bdef6f-03e8-4c91-8437-054b5bb92696","query":{},"timestamp":"2025-06-23T23:55:00.653Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:55:03.099Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-23T23:55:03.991Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-24T00:00:31.246Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-24T00:00:33.238Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-24T00:00:48.463Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-24T00:04:51.656Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-24T00:04:55.583Z"}
+{"ip":"::1","level":"info","message":"POST /api/boards","method":"POST","path":"/api/boards","query":{},"timestamp":"2025-06-24T00:04:58.560Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-24T00:05:00.760Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/5eb7d586-b47b-4380-84d6-2e649a0fd2cc","method":"GET","path":"/api/boards/5eb7d586-b47b-4380-84d6-2e649a0fd2cc","query":{},"timestamp":"2025-06-24T00:05:01.887Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards/5eb7d586-b47b-4380-84d6-2e649a0fd2cc","method":"GET","path":"/api/boards/5eb7d586-b47b-4380-84d6-2e649a0fd2cc","query":{},"timestamp":"2025-06-24T00:05:02.638Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-24T00:05:09.389Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-24T00:05:10.132Z"}
+{"ip":"::1","level":"info","message":"GET /api/boards","method":"GET","path":"/api/boards","query":{},"timestamp":"2025-06-24T00:05:17.218Z"}

@@ -9,6 +9,9 @@ db.sqlite
 /.svelte-kit
 /build
 
+# Compiled files
+api/dist/
+
 # OS
 .DS_Store
 Thumbs.db

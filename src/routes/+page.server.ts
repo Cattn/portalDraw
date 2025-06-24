@@ -1,20 +1,26 @@
 import type { PageServerLoad } from './$types';
-import type { User } from "$lib/types.ts"
+import type { Board } from '$lib/types';
 
-export const load: PageServerLoad = async ({ locals }) => {
-  const loadDataPromise = new Promise<User[]>((resolve, reject) => {
-    const db = locals.db;
-    const query = "SELECT * FROM users";
-    db.all<User>(query, (err: Error|null, rows: User[]) => {
-      if(err) {
-        reject(err);
-        return;
-      }
-      resolve(rows)
-    })
-  })
-  const rows = await loadDataPromise;
-  return {
-    users: rows
-  };
+const API_BASE_URL = 'http://localhost:3001';
+
+export const load: PageServerLoad = async ({ fetch }) => {
+	try {
+		const response = await fetch(`${API_BASE_URL}/api/boards`);
+		
+		if (!response.ok) {
+			return {
+				boards: []
+			};
+		}
+		
+		const boards: Board[] = await response.json();
+		
+		return {
+			boards
+		};
+	} catch (error) {
+		return {
+			boards: []
+		};
+	}
 };
