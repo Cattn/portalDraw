@@ -207,4 +207,4 @@ class WebSocketStore {
 	}
 }
 
-export const websocketStore = new WebSocketStore(); 
+export const websocketStore = new WebSocketStore();

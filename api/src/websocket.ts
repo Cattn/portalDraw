@@ -28,6 +28,7 @@ export class WebSocketHandler {
       cors: config.websocket.cors
     });
 
+    logger.info('WebSocket server initialized with CORS:', config.websocket.cors);
     this.setupEventHandlers();
   }
 
