@@ -14,24 +14,7 @@ export function getBaseURL(): string {
 		
 		return port !== defaultPort ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`;
 	} else {
-		// Server-side: Detect production by checking for CORS_ORIGIN with domain
-		const corsOrigin = process.env.CORS_ORIGIN;
-		const isProduction = corsOrigin && corsOrigin.includes('https://');
-		
-		if (isProduction) {
-			// In production, determine protocol and hostname from CORS_ORIGIN
-			const firstOrigin = corsOrigin.split(',')[0].trim();
-			const url = new URL(firstOrigin);
-			const publicPort = process.env.PUBLIC_PORT || '3001';
-			
-			// Use the same protocol and hostname, with the public port
-			if (url.protocol === 'https:' && publicPort === '443') {
-				return `${url.protocol}//${url.hostname}`;
-			}
-			return `${url.protocol}//${url.hostname}:${publicPort}`;
-		}
-		
-		// Development fallback
+		// Server-side: Always connect directly to the API server on localhost
 		const apiPort = process.env.PORT || '3001';
 		return `http://localhost:${apiPort}`;
 	}
