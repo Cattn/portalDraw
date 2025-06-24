@@ -30,6 +30,10 @@ npm i
 cd api && npm install && cd ..
 ```
 
+### Setting Environment Variables
+
+Refer to ``.env.example`` for an example. Simply change the name to ``.env`` and change and variables you'd like. If you choose not to modify any values, everything shown in .env.example will be the default.
+
 ### Development
 
 **Start both API and frontend servers:**
