@@ -5,11 +5,27 @@
     import { settingsStore } from '$lib/stores/settings.svelte';
     import { scale, fly } from 'svelte/transition';
     import { quintOut } from 'svelte/easing';
+    import { onMount, onDestroy } from 'svelte';
     
     let isCreating = $state(false);
+    let isVisible = $state(true);
 
     // Reactive variables for animation settings
     let animateTransitions = $derived(settingsStore.ui.animateTransitions);
+
+    function toggleSidebar() {
+        isVisible = !isVisible;
+    }
+
+    // Listen for keyboard shortcut events
+    onMount(() => {
+        const handleToggle = () => toggleSidebar();
+        window.addEventListener('toggle-sidebar', handleToggle);
+        
+        return () => {
+            window.removeEventListener('toggle-sidebar', handleToggle);
+        };
+    });
     
     async function createNewBoard() {
         if (isCreating) return;
@@ -32,15 +48,32 @@
     }
 </script>
 
+{#if isVisible}
 <div 
     class="w-20 fixed right-0 top-0 rounded-l-3xl z-10 bg-primary-container h-screen"
-    {...animateTransitions ? { in: fly, params: { x: 80, duration: 500, delay: 200, easing: quintOut } } : {}}
+    in:fly={animateTransitions ? { x: 80, duration: 500, delay: 200, easing: quintOut } : undefined}
+    out:fly={animateTransitions ? { x: 80, duration: 300, easing: quintOut } : undefined}
 >
     <div class="flex flex-col items-center justify-between h-full">
         <div 
             class="flex flex-col items-center mt-5"
             {...animateTransitions ? { in: scale, params: { duration: 400, delay: 300, easing: quintOut } } : {}}
         >
+            <!-- Toggle Button (small) -->
+            <div class="toggle-button">
+                <Button 
+                    square 
+                    iconType="full" 
+                    variant="elevated"
+                    onclick={toggleSidebar}
+                    title="Toggle sidebar (Ctrl+B)"
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"/>
+                </svg>
+                </Button>
+            </div>
+            
             <Button 
                 square 
                 iconType="full" 
@@ -83,3 +116,35 @@
         </div>
     </div>
 </div>
+{:else}
+<!-- Floating toggle button when sidebar is hidden -->
+<div 
+    class="fixed right-4 top-4 z-10"
+    in:scale={animateTransitions ? { duration: 300, easing: quintOut } : undefined}
+    out:scale={animateTransitions ? { duration: 200, easing: quintOut } : undefined}
+>
+    <div class="floating-button">
+        <Button 
+            square 
+            iconType="full" 
+            variant="filled"
+            onclick={toggleSidebar}
+            title="Show sidebar (Ctrl+B)"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"/>
+            </svg>
+        </Button>
+    </div>
+</div>
+{/if}
+
+<style>
+    .toggle-button :global(button) {
+        margin-bottom: 0.5rem;
+    }
+
+    .floating-button :global(button) {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+</style>

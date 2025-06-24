@@ -3,6 +3,7 @@
 	import { drawingStore } from '$lib/stores/drawing.svelte';
 	import { websocketStore } from '$lib/stores/websocket.svelte';
 	import { collaborationStore } from '$lib/stores/collaboration.svelte';
+	import { settingsStore } from '$lib/stores/settings.svelte';
 	import type { Board, Point } from '$lib/types';
 
 	interface Props {
@@ -21,6 +22,9 @@
 
 	// Create reactive cursor class based on current tool
 	let cursorClass = $state('cursor-crosshair');
+	
+	// Get collaboration settings
+	let showOtherCursors = $derived(settingsStore.collaboration.showOtherCursors);
 	
 	$effect(() => {
 		switch (drawingStore.currentTool.type) {
@@ -142,8 +146,10 @@
 		
 		const point = getEventPoint(event);
 		
-		// Send cursor position to collaborators (in screen coordinates)
-		websocketStore.sendCursorMove(point.x, point.y);
+		// Send cursor position to collaborators only if others' cursors are enabled (in screen coordinates)
+		if (showOtherCursors) {
+			websocketStore.sendCursorMove(point.x, point.y);
+		}
 		
 		// Update cursor for stroke eraser (hover highlighting)
 		if (drawingStore.currentTool.type === 'stroke_eraser') {

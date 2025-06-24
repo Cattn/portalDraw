@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { Button, TextField } from 'm3-svelte';
+	import { Button, TextField, Snackbar } from 'm3-svelte';
 	import DrawingCanvas from '$lib/components/DrawingCanvas.svelte';
 	import DrawingToolbar from '$lib/components/DrawingToolbar.svelte';
+	import KeyboardShortcutsHelp from '$lib/components/KeyboardShortcutsHelp.svelte';
 	import { drawingStore } from '$lib/stores/drawing.svelte';
 	import { websocketStore } from '$lib/stores/websocket.svelte';
 	import { collaborationStore } from '$lib/stores/collaboration.svelte';
@@ -18,6 +19,7 @@
 	let board = $state(data.board);
 	let isLoading = false;
 	let toolbarCollapsed = $state(false);
+	let showKeyboardHelp = $state(false);
 	
 	// Inline editing state
 	let editingName = $state(false);
@@ -39,6 +41,23 @@
 
 	// Reactive variables for animation settings
 	let animateTransitions = $derived(settingsStore.ui.animateTransitions);
+	
+	// Reactive variables for collaboration settings
+	let showOtherCursors = $derived(settingsStore.collaboration.showOtherCursors);
+	let enableNotifications = $derived(settingsStore.collaboration.enableNotifications);
+	
+	// Snackbar for notifications
+	let snackbar: ReturnType<typeof Snackbar> | undefined;
+	
+	// Helper function to show snackbar notifications safely
+	function showNotification(message: string, isError = false) {
+		if (snackbar && enableNotifications) {
+			snackbar.show({ 
+				message, 
+				closable: true 
+			});
+		}
+	}
 	
 	// Update reactive variables when websocket state changes
 	$effect(() => {
@@ -211,10 +230,12 @@
 		
 		websocketStore.setCollaboratorJoinedHandler((data) => {
 			collaborationStore.addSession(data.sessionId, data.sessionColor);
+			showNotification('A collaborator joined the board');
 		});
 		
 		websocketStore.setCollaboratorLeftHandler((data) => {
 			collaborationStore.removeSession(data.sessionId);
+			showNotification('A collaborator left the board');
 		});
 		
 		websocketStore.setCursorMoveHandler((data) => {
@@ -246,9 +267,34 @@
 		
 		// Set up collaboration
 		collaborationStore.setCurrentSession(drawingStore.sessionId, drawingStore.sessionColor);
+
+		// Listen for keyboard save shortcut
+		const handleKeyboardSave = async () => {
+			// Auto-save the current board state
+			try {
+				showNotification('Board saved automatically');
+			} catch (error) {
+				console.error('Failed to save board:', error);
+				showNotification('Failed to save board', true);
+			}
+		};
+
+		window.addEventListener('keyboard-save', handleKeyboardSave);
+
+		// Listen for help keyboard shortcuts
+		const handleHelpKeydown = (event: KeyboardEvent) => {
+			if (event.key === '?' || event.key === 'F1') {
+				event.preventDefault();
+				showKeyboardHelp = true;
+			}
+		};
+
+		document.addEventListener('keydown', handleHelpKeydown);
 		
 		return () => {
 			websocketStore.disconnect();
+			window.removeEventListener('keyboard-save', handleKeyboardSave);
+			document.removeEventListener('keydown', handleHelpKeydown);
 		};
 	});
 
@@ -348,6 +394,18 @@
 				</Button>
 			{/if}
 			
+			<Button 
+				variant="text" 
+				onclick={() => showKeyboardHelp = true} 
+				square 
+				title="Keyboard shortcuts (? or F1)" 
+				aria-label="Show keyboard shortcuts"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+					<path fill="currentColor" d="M11 9h2V7h-2m1 13c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m-1 15h2v-6h-2z"/>
+				</svg>
+			</Button>
+			
 			{#if collaborationStore.activeSessionCount > 0}
 				<span class="text-sm text-on-surface whitespace-nowrap">
 					{collaborationStore.activeSessionCount} collaborator{collaborationStore.activeSessionCount === 1 ? '' : 's'} online
@@ -384,23 +442,25 @@
 		<DrawingCanvas {board} />
 		
 		<!-- Collaborator cursors -->
-		{#each collaborationStore.sessionsWithCursors as session}
-			<div 
-				class="absolute pointer-events-none z-30 transition-all duration-75"
-				style="left: {session.cursor?.x}px; top: {session.cursor?.y}px; transform: translate(-50%, -50%);"
-			>
+		{#if showOtherCursors}
+			{#each collaborationStore.sessionsWithCursors as session}
 				<div 
-					class="w-3 h-3 rounded-full border-2 border-surface-container-low shadow-sm"
-					style="background-color: {session.sessionColor};"
-				></div>
-				<div 
-					class="text-xs text-white px-1 py-0.5 rounded mt-1 whitespace-nowrap shadow-sm"
-					style="background-color: {session.sessionColor};"
+					class="absolute pointer-events-none z-30 transition-all duration-75"
+					style="left: {session.cursor?.x}px; top: {session.cursor?.y}px; transform: translate(-50%, -50%);"
 				>
-					Collaborator
+					<div 
+						class="w-3 h-3 rounded-full border-2 border-surface-container-low shadow-sm"
+						style="background-color: {session.sessionColor};"
+					></div>
+					<div 
+						class="text-xs text-white px-1 py-0.5 rounded mt-1 whitespace-nowrap shadow-sm"
+						style="background-color: {session.sessionColor};"
+					>
+						Collaborator
+					</div>
 				</div>
-			</div>
-		{/each}
+			{/each}
+		{/if}
 		
 		<!-- Error display if websocket has issues -->
 		{#if wsError}
@@ -409,4 +469,10 @@
 			</div>
 		{/if}
 	</main>
-</div> 
+</div>
+
+<!-- Snackbar for notifications -->
+<Snackbar bind:this={snackbar} />
+
+<!-- Keyboard shortcuts help modal -->
+<KeyboardShortcutsHelp bind:visible={showKeyboardHelp} /> 

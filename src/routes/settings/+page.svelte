@@ -35,6 +35,7 @@
 	const collaboration = $derived(settingsStore.collaboration);
 	const account = $derived(settingsStore.account);
 	const accessibility = $derived(settingsStore.accessibility);
+	const shortcuts = $derived(settingsStore.shortcuts);
 	
 	// Reactive variables bound to individual settings for two-way binding
 	let defaultBrushSize = $derived.by(() => drawing.defaultBrushSize);
@@ -58,7 +59,8 @@
 		{ id: 'ui', label: 'Interface' },
 		{ id: 'collaboration', label: 'Collaboration' },
 		{ id: 'account', label: 'Account' },
-		{ id: 'accessibility', label: 'Accessibility' }
+		{ id: 'accessibility', label: 'Accessibility' },
+		{ id: 'shortcuts', label: 'Shortcuts' }
 	];
 	
 	const tools = [
@@ -88,7 +90,7 @@
 			}
 		}
 	}
-	
+
 	function exportSettings() {
 		try {
 			settingsStore.exportSettings();
@@ -197,11 +199,84 @@
 			showNotification('Failed to update accessibility setting', true);
 		}
 	}
+
+	async function updateShortcutSetting<K extends keyof typeof shortcuts>(key: K, value: typeof shortcuts[K]) {
+		try {
+			await settingsStore.updateSection('shortcuts', { [key]: value });
+			showNotification('Shortcut updated');
+		} catch (error) {
+			console.error('Failed to update shortcut setting:', error);
+			showNotification('Failed to update shortcut setting', true);
+		}
+	}
+
+	// Keyboard shortcut capture state
+	let capturingShortcut = $state<string | null>(null);
+	let tempShortcut = $state({ key: '', ctrl: false, alt: false, shift: false, meta: false });
+
+	function startShortcutCapture(shortcutId: string) {
+		capturingShortcut = shortcutId;
+		tempShortcut = { key: '', ctrl: false, alt: false, shift: false, meta: false };
+	}
+
+	function cancelShortcutCapture() {
+		capturingShortcut = null;
+		tempShortcut = { key: '', ctrl: false, alt: false, shift: false, meta: false };
+	}
+
+	function handleShortcutKeydown(event: KeyboardEvent) {
+		if (!capturingShortcut) return;
+		
+		event.preventDefault();
+		event.stopPropagation();
+
+		// Special handling for modifier keys
+		if (['Control', 'Alt', 'Shift', 'Meta'].includes(event.key)) {
+			return;
+		}
+
+		// Update temp shortcut
+		tempShortcut = {
+			key: event.key,
+			ctrl: event.ctrlKey,
+			alt: event.altKey,
+			shift: event.shiftKey,
+			meta: event.metaKey
+		};
+	}
+
+	async function applyShortcut() {
+		if (!capturingShortcut || !tempShortcut.key) return;
+
+		const [category, action] = capturingShortcut.split('.');
+		const categoryKey = category as keyof typeof shortcuts;
+		const actionKey = action as keyof typeof shortcuts[typeof categoryKey];
+
+		const updatedCategory = {
+			...shortcuts[categoryKey],
+			[actionKey]: { ...tempShortcut }
+		};
+
+		await updateShortcutSetting(categoryKey, updatedCategory);
+		capturingShortcut = null;
+	}
+
+	function formatShortcut(shortcut: any) {
+		const parts = [];
+		if (shortcut.ctrl) parts.push('Ctrl');
+		if (shortcut.alt) parts.push('Alt');
+		if (shortcut.shift) parts.push('Shift');
+		if (shortcut.meta) parts.push('Cmd');
+		if (shortcut.key) parts.push(shortcut.key === ' ' ? 'Space' : shortcut.key);
+		return parts.join(' + ') || 'Not set';
+	}
 </script>
 
 <svelte:head>
 	<title>Settings - PortalDraw</title>
 </svelte:head>
+
+<svelte:window onkeydown={handleShortcutKeydown} />
 
 <div class="max-w-4xl mx-auto p-6 space-y-6">
 	<!-- Header -->
@@ -515,6 +590,29 @@
 			class="space-y-4"
 			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
 		>
+			<!-- Warning Card -->
+			<Card 
+				variant="elevated" 
+				class="p-6 border-l-4 border-l-yellow-500 bg-yellow-50 dark:bg-yellow-900/20"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 50, easing: quintOut } } : {}}
+			>
+				<div class="flex items-start gap-3">
+					<div class="flex-shrink-0 mt-1">
+						<iconify-icon icon="material-symbols:warning" class="text-yellow-600 dark:text-yellow-400 text-xl"></iconify-icon>
+					</div>
+					<div>
+						<h3 class="m3-font-title-medium text-yellow-800 dark:text-yellow-200 mb-2">Accessibility Notice</h3>
+						<p class="m3-font-body-medium text-yellow-700 dark:text-yellow-300 mb-2">
+							These accessibility features are designed for users with specific visual needs and may significantly alter the appearance and usability of the application.
+						</p>
+						<p class="m3-font-body-small text-yellow-600 dark:text-yellow-400">
+							<strong>High Contrast</strong> and <strong>Large Fonts</strong> are intended for users with visual impairments. 
+							Most users should leave these settings disabled for the optimal experience.
+						</p>
+					</div>
+				</div>
+			</Card>
+
 			<Card 
 				variant="elevated" 
 				class="p-6"
@@ -597,6 +695,353 @@
 					</div>
 				</div>
 			</Card>
+		</div>
+	{/if}
+
+	<!-- Keyboard Shortcuts Settings -->
+	{#if currentTab === 'shortcuts'}
+		<div 
+			class="space-y-4"
+			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
+		>
+			<!-- Info Card -->
+			<Card 
+				variant="elevated" 
+				class="p-6 border-l-4 border-l-blue-500 bg-blue-50 dark:bg-blue-900/20"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 50, easing: quintOut } } : {}}
+			>
+				<div class="flex items-start gap-3">
+					<div class="flex-shrink-0 mt-1">
+						<iconify-icon icon="material-symbols:keyboard" class="text-blue-600 dark:text-blue-400 text-xl"></iconify-icon>
+					</div>
+					<div>
+						<h3 class="m3-font-title-medium text-blue-800 dark:text-blue-200 mb-2">Keyboard Shortcuts</h3>
+						<p class="m3-font-body-medium text-blue-700 dark:text-blue-300 mb-2">
+							Customize keyboard shortcuts for tools and actions. Click on any shortcut to change it.
+						</p>
+						<p class="m3-font-body-small text-blue-600 dark:text-blue-400">
+							Shortcuts will only work when the <strong>Enable Keyboard Shortcuts</strong> option is turned on in Accessibility settings.
+						</p>
+					</div>
+				</div>
+			</Card>
+
+			<!-- Drawing Tools Shortcuts -->
+			<Card 
+				variant="elevated" 
+				class="p-6"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } } : {}}
+			>
+				<h2 class="m3-font-headline-small mb-4">Drawing Tools</h2>
+				
+				<div class="space-y-4">
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Pen Tool</p>
+							<p class="m3-font-body-small text-on-surface-variant">Switch to pen drawing tool</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'tools.pen'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('tools.pen')}
+							>
+								{capturingShortcut === 'tools.pen' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.tools.pen)
+								}
+							</Button>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Highlighter Tool</p>
+							<p class="m3-font-body-small text-on-surface-variant">Switch to highlighter tool</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'tools.highlighter'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('tools.highlighter')}
+							>
+								{capturingShortcut === 'tools.highlighter' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.tools.highlighter)
+								}
+							</Button>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Eraser Tool</p>
+							<p class="m3-font-body-small text-on-surface-variant">Switch to eraser tool</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'tools.eraser'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('tools.eraser')}
+							>
+								{capturingShortcut === 'tools.eraser' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.tools.eraser)
+								}
+							</Button>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Hand Tool</p>
+							<p class="m3-font-body-small text-on-surface-variant">Switch to pan/hand tool</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'tools.hand'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('tools.hand')}
+							>
+								{capturingShortcut === 'tools.hand' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.tools.hand)
+								}
+							</Button>
+						</div>
+					</div>
+				</div>
+			</Card>
+
+			<!-- Canvas Actions Shortcuts -->
+			<Card 
+				variant="elevated" 
+				class="p-6"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } } : {}}
+			>
+				<h2 class="m3-font-headline-small mb-4">Canvas Actions</h2>
+				
+				<div class="space-y-4">
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Undo</p>
+							<p class="m3-font-body-small text-on-surface-variant">Undo last action</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.undo'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('canvas.undo')}
+							>
+								{capturingShortcut === 'canvas.undo' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.canvas.undo)
+								}
+							</Button>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Redo</p>
+							<p class="m3-font-body-small text-on-surface-variant">Redo last undone action</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.redo'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('canvas.redo')}
+							>
+								{capturingShortcut === 'canvas.redo' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.canvas.redo)
+								}
+							</Button>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Clear Canvas</p>
+							<p class="m3-font-body-small text-on-surface-variant">Clear all drawings</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.clear'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('canvas.clear')}
+							>
+								{capturingShortcut === 'canvas.clear' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.canvas.clear)
+								}
+							</Button>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Zoom In</p>
+							<p class="m3-font-body-small text-on-surface-variant">Zoom into the canvas</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.zoomIn'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('canvas.zoomIn')}
+							>
+								{capturingShortcut === 'canvas.zoomIn' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.canvas.zoomIn)
+								}
+							</Button>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Zoom Out</p>
+							<p class="m3-font-body-small text-on-surface-variant">Zoom out of the canvas</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.zoomOut'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('canvas.zoomOut')}
+							>
+								{capturingShortcut === 'canvas.zoomOut' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.canvas.zoomOut)
+								}
+							</Button>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Reset Zoom</p>
+							<p class="m3-font-body-small text-on-surface-variant">Reset zoom to 100%</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.resetZoom'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('canvas.resetZoom')}
+							>
+								{capturingShortcut === 'canvas.resetZoom' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.canvas.resetZoom)
+								}
+							</Button>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Save</p>
+							<p class="m3-font-body-small text-on-surface-variant">Save the current drawing</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.save'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('canvas.save')}
+							>
+								{capturingShortcut === 'canvas.save' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.canvas.save)
+								}
+							</Button>
+						</div>
+					</div>
+				</div>
+			</Card>
+
+			<!-- UI Actions Shortcuts -->
+			<Card 
+				variant="elevated" 
+				class="p-6"
+				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 300, easing: quintOut } } : {}}
+			>
+				<h2 class="m3-font-headline-small mb-4">UI Actions</h2>
+				
+				<div class="space-y-4">
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Toggle Sidebar</p>
+							<p class="m3-font-body-small text-on-surface-variant">Show/hide the sidebar</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'ui.toggleSidebar'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('ui.toggleSidebar')}
+							>
+								{capturingShortcut === 'ui.toggleSidebar' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.ui.toggleSidebar)
+								}
+							</Button>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Open Settings</p>
+							<p class="m3-font-body-small text-on-surface-variant">Open the settings page</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'ui.settings'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('ui.settings')}
+							>
+								{capturingShortcut === 'ui.settings' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.ui.settings)
+								}
+							</Button>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between">
+						<div>
+							<p class="m3-font-body-medium">Toggle Fullscreen</p>
+							<p class="m3-font-body-small text-on-surface-variant">Enter/exit fullscreen mode</p>
+						</div>
+						<div class="shortcut-button" class:capturing={capturingShortcut === 'ui.fullscreen'}>
+							<Button
+								variant="outlined"
+								onclick={() => startShortcutCapture('ui.fullscreen')}
+							>
+								{capturingShortcut === 'ui.fullscreen' 
+									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
+									: formatShortcut(shortcuts.ui.fullscreen)
+								}
+							</Button>
+						</div>
+					</div>
+				</div>
+			</Card>
+
+			<!-- Shortcut Capture Controls -->
+			{#if capturingShortcut}
+				<div 
+					class="card-container"
+					in:scale={{ duration: 200 }}
+				>
+					<Card 
+						variant="elevated" 
+						class="p-6 border-2 border-primary bg-primary-container"
+					>
+					<div class="flex items-center justify-between">
+						<div>
+							<h3 class="m3-font-title-medium">Recording Shortcut</h3>
+							<p class="m3-font-body-small text-on-surface-variant">
+								Press the keys you want to use. Current: {tempShortcut.key ? formatShortcut(tempShortcut) : 'None'}
+							</p>
+						</div>
+						<div class="flex gap-2">
+							<Button variant="outlined" onclick={cancelShortcutCapture}>
+								Cancel
+							</Button>
+							{#if tempShortcut.key}
+								<Button variant="filled" onclick={applyShortcut}>
+									Apply
+								</Button>
+							{/if}
+						</div>
+					</div>
+					</Card>
+				</div>
+			{/if}
 		</div>
 	{/if}
 
@@ -683,5 +1128,11 @@
 		background: #3b82f6;
 		cursor: pointer;
 		border: none;
+	}
+
+	/* Shortcut button styling */
+	.shortcut-button.capturing :global(button) {
+		border: 2px solid rgb(var(--m3-scheme-primary));
+		box-shadow: 0 0 0 2px rgba(var(--m3-scheme-primary), 0.2);
 	}
 </style>

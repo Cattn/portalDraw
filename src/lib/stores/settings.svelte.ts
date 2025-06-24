@@ -39,6 +39,10 @@ class SettingsStore {
 		return this.#settings.accessibility;
 	}
 
+	get shortcuts() {
+		return this.#settings.shortcuts;
+	}
+
 	/**
 	 * Initialize settings with server-loaded data
 	 */

@@ -82,6 +82,7 @@ export interface AppSettings {
 	collaboration: CollaborationSettings;
 	account: AccountSettings;
 	accessibility: AccessibilitySettings;
+	shortcuts: ShortcutSettings;
 }
 
 export interface DrawingSettings {
@@ -111,6 +112,41 @@ export interface AccessibilitySettings {
 	enableKeyboardShortcuts: boolean;
 }
 
+// Keyboard shortcut types
+export interface KeyboardShortcut {
+	key: string;
+	ctrl?: boolean;
+	alt?: boolean;
+	shift?: boolean;
+	meta?: boolean;
+}
+
+export interface ShortcutSettings {
+	// Drawing tools
+	tools: {
+		pen: KeyboardShortcut;
+		highlighter: KeyboardShortcut;
+		eraser: KeyboardShortcut;
+		hand: KeyboardShortcut;
+	};
+	// Canvas actions
+	canvas: {
+		undo: KeyboardShortcut;
+		redo: KeyboardShortcut;
+		clear: KeyboardShortcut;
+		zoomIn: KeyboardShortcut;
+		zoomOut: KeyboardShortcut;
+		resetZoom: KeyboardShortcut;
+		save: KeyboardShortcut;
+	};
+	// UI actions
+	ui: {
+		toggleSidebar: KeyboardShortcut;
+		settings: KeyboardShortcut;
+		fullscreen: KeyboardShortcut;
+	};
+}
+
 export const DEFAULT_SETTINGS: AppSettings = {
 	version: '1.0.0',
 	drawing: {
@@ -134,5 +170,27 @@ export const DEFAULT_SETTINGS: AppSettings = {
 		highContrast: false,
 		increaseFontSize: false,
 		enableKeyboardShortcuts: true
+	},
+	shortcuts: {
+		tools: {
+			pen: { key: 'p' },
+			highlighter: { key: 'h' },
+			eraser: { key: 'e' },
+			hand: { key: 'space' }
+		},
+		canvas: {
+			undo: { key: 'z', ctrl: true },
+			redo: { key: 'y', ctrl: true },
+			clear: { key: 'Delete', alt: true },
+			zoomIn: { key: '=', ctrl: true },
+			zoomOut: { key: '-', ctrl: true },
+			resetZoom: { key: '0', ctrl: true },
+			save: { key: 's', ctrl: true }
+		},
+		ui: {
+			toggleSidebar: { key: 'b', ctrl: true },
+			settings: { key: ',', ctrl: true },
+			fullscreen: { key: 'f', alt: true }
+		}
 	}
 };

@@ -3,7 +3,8 @@
 	import '../main.css';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import { settingsStore } from '$lib/stores/settings.svelte';
-	import { onMount } from 'svelte';
+	import { keyboardShortcutService } from '$lib/services/keyboard-shortcuts';
+	import { onMount, onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import type { AppSettings } from '$lib/types';
@@ -24,14 +25,24 @@
 			settingsStore.initializeSettings(data.settings);
 		}
 		
-		// Apply initial theme
+		// Apply initial theme and accessibility
 		applyTheme();
+		applyAccessibility();
+
+		// Initialize keyboard shortcuts
+		keyboardShortcutService.init();
 	});
 
-	// Reactive effect to apply theme changes
+	// Cleanup on component destroy
+	onDestroy(() => {
+		keyboardShortcutService.destroy();
+	});
+
+	// Reactive effect to apply theme and accessibility changes
 	$effect(() => {
-		if (settingsStore.ui) {
+		if (settingsStore.ui || settingsStore.accessibility) {
 			applyTheme();
+			applyAccessibility();
 		}
 	});
 
@@ -45,6 +56,26 @@
 			} else {
 				htmlElement.classList.add('light-mode');
 				htmlElement.classList.remove('dark-mode');
+			}
+		}
+	}
+
+	function applyAccessibility() {
+		if (typeof document !== 'undefined') {
+			const htmlElement = document.documentElement;
+			
+			// High contrast mode
+			if (settingsStore.accessibility.highContrast) {
+				htmlElement.classList.add('high-contrast');
+			} else {
+				htmlElement.classList.remove('high-contrast');
+			}
+			
+			// Increased font size
+			if (settingsStore.accessibility.increaseFontSize) {
+				htmlElement.classList.add('large-fonts');
+			} else {
+				htmlElement.classList.remove('large-fonts');
 			}
 		}
 	}
