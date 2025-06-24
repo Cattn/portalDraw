@@ -84,7 +84,7 @@
 </script>
 
 <div 
-	class="flex items-center gap-4 p-3 bg-surface-container-high"
+	class="flex items-center gap-4 p-3 bg-surface-container-high overflow-x-auto md:overflow-x-visible"
 	{...animateTransitions ? { in: slide, params: { duration: 300, easing: quintOut } } : {}}
 >
 	<!-- Collapse button -->
@@ -94,7 +94,7 @@
 	
 	<!-- Tools -->
 	<div 
-		class="flex items-center gap-2"
+		class="flex items-center gap-2 flex-shrink-0"
 		{...animateTransitions ? { in: fly, params: { x: -20, duration: 400, delay: 100, easing: quintOut } } : {}}
 	>
 		<span class="text-sm font-medium">Tools:</span>
@@ -114,7 +114,7 @@
 	<!-- Size (hide for hand tool) -->
 	{#if currentTool.type !== 'hand'}
 		<div 
-			class="flex items-center gap-2"
+			class="flex items-center gap-2 flex-shrink-0"
 			{...animateTransitions ? { 
 				in: fly, 
 				params: { x: -20, duration: 400, delay: 200, easing: quintOut },
@@ -151,7 +151,7 @@
 	<!-- Colors (hide for hand tool and erasers) -->
 	{#if currentTool.type !== 'hand' && currentTool.type !== 'eraser' && currentTool.type !== 'stroke_eraser'}
 		<div 
-			class="flex items-center gap-2"
+			class="flex items-center gap-2 flex-shrink-0"
 			{...animateTransitions ? { 
 				in: fly, 
 				params: { x: -20, duration: 400, delay: 300, easing: quintOut },
@@ -185,7 +185,7 @@
 
 	<!-- Zoom controls -->
 	<div 
-		class="flex items-center gap-2"
+		class="flex items-center gap-2 flex-shrink-0"
 		{...animateTransitions ? { in: fly, params: { x: -20, duration: 400, delay: 400, easing: quintOut } } : {}}
 	>
 		<span class="text-sm font-medium">Zoom:</span>
@@ -202,7 +202,7 @@
 
 	<!-- Actions -->
 	<div 
-		class="flex items-center gap-2 ml-auto"
+		class="flex items-center gap-2 ml-auto flex-shrink-0"
 		{...animateTransitions ? { in: fly, params: { x: -20, duration: 400, delay: 500, easing: quintOut } } : {}}
 	>
 		<Button variant="tonal" onclick={() => drawingStore.undo()} aria-label="Undo last action">
