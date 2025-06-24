@@ -14,16 +14,9 @@ export function getBaseURL(): string {
 		
 		return port !== defaultPort ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`;
 	} else {
-		const host = process.env.API_HOST || 'localhost';
-		const port = process.env.API_PORT || PUBLIC_PORT || '3001';
-		const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-		
-		// In production with HTTPS, don't append port if using standard port
-		if (protocol === 'https' && (port === '443' || !port || port === '80')) {
-			return `${protocol}://${host}`;
-		}
-		
-		return `${protocol}://${host}:${port}`;
+		// Server-side: Connect directly to local API server using the actual PORT it runs on
+		const apiPort = process.env.PORT || '3001';
+		return `http://localhost:${apiPort}`;
 	}
 }
 
