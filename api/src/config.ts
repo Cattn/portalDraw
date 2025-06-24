@@ -18,12 +18,16 @@ export const config = {
   },
   cors: {
     origin: corsOrigins,
-    credentials: false
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
   },
   websocket: {
     cors: {
       origin: corsOrigins,
-      methods: ["GET", "POST"]
+      methods: ["GET", "POST"],
+      credentials: true,
+      allowedHeaders: ['Content-Type', 'Authorization']
     }
   }
-}; 
+};

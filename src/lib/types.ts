@@ -6,11 +6,23 @@ export function getBaseURL(): string {
 		const hostname = window.location.hostname;
 		const port = PUBLIC_PORT || '3001';
 		const defaultPort = protocol === 'https:' ? '443' : '80';
+		
+		// In production with HTTPS, don't append port if using standard port or if port matches default
+		if (protocol === 'https:' && (port === '443' || port === defaultPort)) {
+			return `${protocol}//${hostname}`;
+		}
+		
 		return port !== defaultPort ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`;
 	} else {
 		const host = process.env.API_HOST || 'localhost';
 		const port = process.env.API_PORT || PUBLIC_PORT || '3001';
 		const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+		
+		// In production with HTTPS, don't append port if using standard port
+		if (protocol === 'https' && (port === '443' || !port || port === '80')) {
+			return `${protocol}://${host}`;
+		}
+		
 		return `${protocol}://${host}:${port}`;
 	}
 }
