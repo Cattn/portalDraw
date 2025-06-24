@@ -50,6 +50,25 @@ class ApiService {
 		});
 	}
 
+	async deleteBoard(id: string): Promise<void> {
+		const url = `${API_BASE_URL}/api/boards/${id}`;
+		
+		const response = await fetch(url, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		
+		if (!response.ok) {
+			const error = await response.json().catch(() => ({ error: 'Network error' }));
+			throw new Error(error.error || `HTTP ${response.status}`);
+		}
+		
+		// Don't try to parse JSON for 204 No Content responses
+		return;
+	}
+
 	async getBoardEvents(boardId: string, fromSequence?: number): Promise<DrawingEvent[]> {
 		const query = fromSequence ? `?fromSequence=${fromSequence}` : '';
 		return this.request<DrawingEvent[]>(`/boards/${boardId}/events${query}`);

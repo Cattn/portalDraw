@@ -1,16 +1,12 @@
 <script lang="ts">
 	import '../app.css';
+	import '../main.css';
+	import Sidebar from '$lib/components/Sidebar.svelte';
 
 	let { children } = $props();
 </script>
 
-<svelte:head>
-	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-	<link
-		href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-		rel="stylesheet"
-	/>
-</svelte:head>
-
-{@render children()}
+<div class="h-screen pr-20">
+	{@render children()}
+	<Sidebar />
+</div>

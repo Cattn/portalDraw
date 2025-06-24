@@ -1,5 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
+import { currentBoard } from '$lib/store';
 
 const API_BASE_URL = 'http://localhost:3001';
 
@@ -15,7 +16,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 		}
 		
 		const board = await response.json();
-		
+		currentBoard.set(board);
 		return {
 			board
 		};

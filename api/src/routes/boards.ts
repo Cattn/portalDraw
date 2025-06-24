@@ -92,6 +92,25 @@ export function createBoardsRouter(db: Database): Router {
     }
   });
 
+  // DELETE /api/boards/:id - Delete a board
+  router.delete('/:id', async (req: any, res: any) => {
+    try {
+      const { id } = req.params;
+
+      // Check if board exists
+      const existingBoard = await db.getBoardById(id);
+      if (!existingBoard) {
+        return res.status(404).json({ error: 'Board not found' });
+      }
+
+      await db.deleteBoard(id);
+      res.status(204).send(); // No content response for successful deletion
+    } catch (error) {
+      console.error('Error deleting board:', error);
+      res.status(500).json({ error: 'Failed to delete board' });
+    }
+  });
+
   // GET /api/boards/:id/events - Get drawing events for a board
   router.get('/:id/events', async (req: any, res: any) => {
     try {

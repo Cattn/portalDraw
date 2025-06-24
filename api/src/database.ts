@@ -133,6 +133,49 @@ export class Database {
     });
   }
 
+  async deleteBoard(id: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // Start a transaction to delete board and related data
+      this.db.serialize(() => {
+        this.db.run('BEGIN TRANSACTION');
+        
+        // Delete related drawing events first
+        this.db.run('DELETE FROM drawing_events WHERE board_id = ?', [id], (err) => {
+          if (err) {
+            this.db.run('ROLLBACK');
+            reject(err);
+            return;
+          }
+        });
+        
+        // Delete related board sessions
+        this.db.run('DELETE FROM board_sessions WHERE board_id = ?', [id], (err) => {
+          if (err) {
+            this.db.run('ROLLBACK');
+            reject(err);
+            return;
+          }
+        });
+        
+        // Delete the board itself
+        this.db.run('DELETE FROM boards WHERE id = ?', [id], (err) => {
+          if (err) {
+            this.db.run('ROLLBACK');
+            reject(err);
+          } else {
+            this.db.run('COMMIT', (commitErr) => {
+              if (commitErr) {
+                reject(commitErr);
+              } else {
+                resolve();
+              }
+            });
+          }
+        });
+      });
+    });
+  }
+
   // Drawing events operations
   async saveDrawingEvent(event: DrawingEvent): Promise<void> {
     return new Promise((resolve, reject) => {

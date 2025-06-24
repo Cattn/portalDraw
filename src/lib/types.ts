@@ -20,8 +20,8 @@ export interface DrawingEvent {
 	id: string;
 	boardId: string;
 	sessionId: string;
-	type: 'stroke' | 'erase' | 'clear' | 'undo' | 'redo' | 'cursor';
-	data: DrawingStroke | Point | { layers?: string[] } | Record<string, unknown>;
+	type: 'stroke' | 'erase' | 'clear' | 'undo' | 'redo' | 'cursor' | 'stroke_deleted';
+	data: DrawingStroke | Point | { layers?: string[] } | { strokeIds?: string[] } | Record<string, unknown>;
 	timestamp: number;
 	sequence: number;
 }
@@ -43,7 +43,7 @@ export interface Point {
 }
 
 export interface DrawingTool {
-	type: 'pen' | 'eraser' | 'highlighter' | 'text';
+	type: 'pen' | 'eraser' | 'stroke_eraser' | 'highlighter' | 'text' | 'hand';
 	size: number;
 	opacity: number;
 }

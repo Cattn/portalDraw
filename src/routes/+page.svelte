@@ -10,6 +10,7 @@
 	
 	let boards: Board[] = data.boards || [];
 	let isCreating = false;
+	let isDeleting = false;
 
 	async function createBoard() {
 		if (isCreating) return;
@@ -33,6 +34,24 @@
 	async function openBoard(boardId: string) {
 		// Navigate to the board page
 		goto(`/board/${boardId}`);
+	}
+
+	async function confirmDelete(board: Board) {
+		const confirmed = confirm(`Are you sure you want to delete "${board.name}"? This action cannot be undone and will remove all drawing data associated with this board.`);
+		
+		if (!confirmed) return;
+		
+		if (isDeleting) return;
+		
+		isDeleting = true;
+		try {
+			await apiService.deleteBoard(board.id);
+			boards = boards.filter(b => b.id !== board.id);
+		} catch (error) {
+			alert('Failed to delete board. Please try again.');
+		} finally {
+			isDeleting = false;
+		}
 	}
 </script>
 
@@ -60,12 +79,19 @@
 					<div class="mt-2 text-xs text-gray-500">
 						Created: {new Date(board.created_at).toLocaleDateString()}
 					</div>
-					<div class="mt-2">
+					<div class="mt-3 flex gap-2">
 						<Button 
-							variant="outlined"
+							variant="filled"
 							onclick={() => openBoard(board.id)}
 						>
 							Open Board
+						</Button>
+						<Button 
+							variant="tonal"
+							onclick={() => confirmDelete(board)}
+							disabled={isDeleting}
+						>
+							{isDeleting ? 'Deleting...' : 'Delete'}
 						</Button>
 					</div>
 				</div>

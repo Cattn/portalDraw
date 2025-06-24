@@ -16,6 +16,27 @@
 	let isDrawing = false;
 	let lastPoint: Point | null = null;
 	let isMouseDown = false; // Track global mouse state
+	let isPanning = false;
+	let lastPanPoint: Point | null = null;
+
+	// Create reactive cursor class based on current tool
+	let cursorClass = $state('cursor-crosshair');
+	
+	$effect(() => {
+		switch (drawingStore.currentTool.type) {
+			case 'hand':
+				cursorClass = isPanning ? 'cursor-grabbing' : 'cursor-grab';
+				break;
+			case 'eraser':
+				cursorClass = 'cursor-pointer';
+				break;
+			case 'stroke_eraser':
+				cursorClass = 'cursor-crosshair';
+				break;
+			default:
+				cursorClass = 'cursor-crosshair';
+		}
+	});
 
 	onMount(() => {
 		// Set up canvas immediately with fixed dimensions
@@ -32,6 +53,11 @@
 					drawingStore.endStroke();
 					lastPoint = null;
 				}
+				if (isPanning) {
+					isPanning = false;
+					drawingStore.isPanning = false;
+					lastPanPoint = null;
+				}
 			}
 		};
 		
@@ -42,6 +68,11 @@
 					isDrawing = false;
 					drawingStore.endStroke();
 					lastPoint = null;
+				}
+				if (isPanning) {
+					isPanning = false;
+					drawingStore.isPanning = false;
+					lastPanPoint = null;
 				}
 			}
 		};
@@ -90,11 +121,20 @@
 	function handlePointerDown(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
 		isMouseDown = true;
-		isDrawing = true;
         
 		const point = getEventPoint(event);
-		lastPoint = point;
-		drawingStore.startStroke(point);
+		
+		if (drawingStore.currentTool.type === 'hand') {
+			// Start panning
+			isPanning = true;
+			drawingStore.isPanning = true;
+			lastPanPoint = point;
+		} else {
+			// Start drawing
+			isDrawing = true;
+			lastPoint = point;
+			drawingStore.startStroke(point);
+		}
 	}
 
 	function handlePointerMove(event: MouseEvent | TouchEvent) {
@@ -102,10 +142,22 @@
 		
 		const point = getEventPoint(event);
 		
-		// Send cursor position to collaborators
+		// Send cursor position to collaborators (in screen coordinates)
 		websocketStore.sendCursorMove(point.x, point.y);
 		
-		if (isDrawing && lastPoint) {
+		// Update cursor for stroke eraser (hover highlighting)
+		if (drawingStore.currentTool.type === 'stroke_eraser') {
+			drawingStore.updateCursor(point);
+		}
+		
+		if (isPanning && lastPanPoint) {
+			// Handle panning
+			const deltaX = point.x - lastPanPoint.x;
+			const deltaY = point.y - lastPanPoint.y;
+			drawingStore.pan(deltaX, deltaY);
+			lastPanPoint = point;
+		} else if (isDrawing && lastPoint) {
+			// Handle drawing
 			drawingStore.addPoint(point);
 			lastPoint = point;
 		}
@@ -120,24 +172,37 @@
 			drawingStore.endStroke();
 			lastPoint = null;
 		}
+		
+		if (isPanning) {
+			isPanning = false;
+			drawingStore.isPanning = false;
+			lastPanPoint = null;
+		}
 	}
 
 	function handlePointerEnter(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
 		
-		// If mouse is still down when re-entering canvas, resume drawing
-		if (isMouseDown && !isDrawing) {
-			isDrawing = true;
+		// If mouse is still down when re-entering canvas, resume appropriate action
+		if (isMouseDown) {
 			const point = getEventPoint(event);
-			lastPoint = point;
-			drawingStore.startStroke(point);
+			
+			if (drawingStore.currentTool.type === 'hand' && !isPanning) {
+				isPanning = true;
+				drawingStore.isPanning = true;
+				lastPanPoint = point;
+			} else if (drawingStore.currentTool.type !== 'hand' && !isDrawing) {
+				isDrawing = true;
+				lastPoint = point;
+				drawingStore.startStroke(point);
+			}
 		}
 	}
 
 	function handlePointerLeave(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
-		// Don't end the stroke when leaving canvas - let global mouse up handle it
-		// This allows drawing to continue when cursor re-enters
+		// Don't end the action when leaving canvas - let global mouse up handle it
+		// This allows drawing/panning to continue when cursor re-enters
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
@@ -156,6 +221,44 @@
 					drawingStore.redo();
 					break;
 			}
+		} else {
+			// Tool shortcuts
+			switch (event.key) {
+				case 'h':
+					event.preventDefault();
+					drawingStore.setTool({ ...drawingStore.currentTool, type: 'hand' });
+					break;
+				case 'p':
+					event.preventDefault();
+					drawingStore.setTool({ ...drawingStore.currentTool, type: 'pen', opacity: 1 });
+					break;
+				case 'e':
+					event.preventDefault();
+					drawingStore.setTool({ ...drawingStore.currentTool, type: 'eraser', opacity: 1 });
+					break;
+				case 'E': // Shift+E for stroke eraser
+					event.preventDefault();
+					drawingStore.setTool({ ...drawingStore.currentTool, type: 'stroke_eraser', opacity: 1 });
+					break;
+				case '0':
+					event.preventDefault();
+					drawingStore.resetView();
+					break;
+			}
+		}
+	}
+
+	function handleWheel(event: WheelEvent) {
+		event.preventDefault();
+		
+		const point = getEventPoint(event);
+		const zoomDelta = event.deltaY > 0 ? 1 / 1.1 : 1.1;
+		
+		drawingStore.zoomAt(point, zoomDelta);
+		
+		// Automatically switch to hand tool when zooming
+		if (drawingStore.currentTool.type !== 'hand') {
+			drawingStore.setTool({ ...drawingStore.currentTool, type: 'hand' });
 		}
 	}
 </script>
@@ -164,12 +267,12 @@
 
 <div 
 	bind:this={canvasContainer}
-	class="fixed inset-0 cursor-crosshair grid-background"
+	class="fixed inset-0 {cursorClass}"
 	style="touch-action: none;"
 >
 	<canvas
 		bind:this={canvas}
-		class="fixed inset-0 block bg-transparent"
+		class="fixed inset-0 block bg-surface-container-high"
 		style="width: 100vw; height: 100vh;"
 		onmousedown={handlePointerDown}
 		onmousemove={handlePointerMove}
@@ -179,16 +282,7 @@
 		ontouchstart={handlePointerDown}
 		ontouchmove={handlePointerMove}
 		ontouchend={handlePointerUp}
+		onwheel={handleWheel}
 	></canvas>
 </div>
-
-<style>
-	.grid-background {
-		background-color: white;
-		background-image: 
-			linear-gradient(to right, #f0f0f0 1px, transparent 1px),
-			linear-gradient(to bottom, #f0f0f0 1px, transparent 1px);
-		background-size: 20px 20px;
-	}
-</style>
 
