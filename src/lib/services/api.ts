@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import type { Board, DrawingEvent, BoardSession } from '$lib/types';
+import type { Board, DrawingEvent, BoardSession, AppSettings } from '$lib/types';
 
 const API_BASE_URL = browser 
 	? (window.location.hostname === 'localhost' 
@@ -78,9 +78,36 @@ class ApiService {
 		return this.request<BoardSession[]>(`/boards/${boardId}/sessions`);
 	}
 
+	// Settings API methods
+	async getSettings(): Promise<AppSettings> {
+		return this.request<AppSettings>('/settings');
+	}
+
+	async updateSettings(settings: Partial<AppSettings>): Promise<AppSettings> {
+		return this.request<AppSettings>('/settings', {
+			method: 'PUT',
+			body: JSON.stringify(settings),
+		});
+	}
+
+	async resetSettings(): Promise<AppSettings> {
+		return this.request<AppSettings>('/settings/reset', {
+			method: 'POST',
+		});
+	}
+
+	async importSettings(settings: AppSettings): Promise<AppSettings> {
+		return this.request<AppSettings>('/settings/import', {
+			method: 'POST',
+			body: JSON.stringify(settings),
+		});
+	}
+
 	// Health check
 	async healthCheck(): Promise<{ status: string; timestamp: string; uptime: number }> {
-		return this.request('/health');
+		const url = `${API_BASE_URL}/health`;
+		const response = await fetch(url);
+		return response.json();
 	}
 }
 

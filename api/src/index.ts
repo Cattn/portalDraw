@@ -5,6 +5,8 @@ import winston from 'winston';
 import { Database } from './database';
 import { WebSocketHandler } from './websocket';
 import { createBoardsRouter } from './routes/boards';
+import { createSettingsRouter } from './routes/settings';
+import { SettingsConfig } from './settings-config';
 import { config } from './config';
 
 const logger = winston.createLogger({
@@ -25,6 +27,11 @@ async function startServer() {
     const database = new Database();
     await database.initialize();
     logger.info('Database initialized successfully');
+
+    // Initialize settings configuration
+    const settingsConfig = new SettingsConfig();
+    await settingsConfig.initialize();
+    logger.info('Settings configuration initialized successfully');
 
     // Create Express app
     const app = express();
@@ -57,6 +64,7 @@ async function startServer() {
 
     // API routes
     app.use('/api/boards', createBoardsRouter(database));
+    app.use('/api/settings', createSettingsRouter(settingsConfig));
 
     // Initialize WebSocket handler
     const wsHandler = new WebSocketHandler(server, database);

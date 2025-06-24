@@ -72,3 +72,67 @@ export interface WebSocketMessage {
 	sessionId: string;
 	timestamp: number;
 }
+
+// Settings types
+export interface AppSettings {
+	version: string;
+	exportDate?: string;
+	drawing: DrawingSettings;
+	ui: UISettings;
+	collaboration: CollaborationSettings;
+	account: AccountSettings;
+	accessibility: AccessibilitySettings;
+}
+
+export interface DrawingSettings {
+	defaultTool: 'pen' | 'highlighter' | 'eraser';
+	defaultBrushSize: number;
+	defaultColor: string;
+	smoothStrokes: boolean;
+}
+
+export interface UISettings {
+	darkMode: boolean;
+	animateTransitions: boolean;
+}
+
+export interface CollaborationSettings {
+	showOtherCursors: boolean;
+	enableNotifications: boolean;
+}
+
+export interface AccountSettings {
+	profileColor: string;
+}
+
+export interface AccessibilitySettings {
+	highContrast: boolean;
+	increaseFontSize: boolean;
+	enableKeyboardShortcuts: boolean;
+}
+
+export const DEFAULT_SETTINGS: AppSettings = {
+	version: '1.0.0',
+	drawing: {
+		defaultTool: 'pen',
+		defaultBrushSize: 2,
+		defaultColor: '#000000',
+		smoothStrokes: true
+	},
+	ui: {
+		darkMode: false,
+		animateTransitions: true
+	},
+	collaboration: {
+		showOtherCursors: true,
+		enableNotifications: true
+	},
+	account: {
+		profileColor: '#3498db'
+	},
+	accessibility: {
+		highContrast: false,
+		increaseFontSize: false,
+		enableKeyboardShortcuts: true
+	}
+};
