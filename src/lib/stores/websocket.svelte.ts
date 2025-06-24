@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
 import type { WebSocketMessage } from '$lib/types';
-import { baseURL } from '$lib/types';
+import { getBaseURL } from '$lib/types';
 import io, { type Socket } from 'socket.io-client';
 
 
@@ -57,6 +57,9 @@ class WebSocketStore {
 		this.error = null;
 		
 		try {
+			const baseURL = getBaseURL();
+			console.log('WebSocket connecting to:', baseURL);
+			
 			this.socket = io(baseURL, {
 				transports: ['websocket', 'polling']
 			});
