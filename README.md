@@ -5,7 +5,7 @@
 ### Showcases
 
 <p align="center">
-    <img src="">
+    <img src="https://github.com/Cattn/portalDraw/blob/main/static/showcase.png?raw=true">
 </p>
 
 A collaborative real-time drawing application built with SvelteKit and a separate TypeScript API server. This project prioritizes self-hostability & being private. It is recommended to use Tailscale, or some other wireguard setup to have users access the site on their devices, and not expose it to the internet..
