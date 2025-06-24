@@ -5,6 +5,10 @@ dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const parseOrigins = (originsString: string): string | string[] => {
   const origins = originsString.split(',').map(origin => origin.trim());
+  
+  origins.push('http://localhost:5024'); 
+  origins.push('http://localhost:5173'); 
+  
   return origins.length === 1 ? origins[0] : origins;
 };
 
