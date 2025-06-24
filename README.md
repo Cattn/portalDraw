@@ -1,39 +1,15 @@
-# PortalDraw
+<h3 align="center">
+    <strong>portalDraw</strong>
+</h3>
 
-A collaborative real-time drawing application built with SvelteKit and a separate TypeScript API server.
+### Showcases
 
-## Architecture
+<p align="center">
+    <img src="">
+</p>
 
-This project uses a **decoupled architecture** with:
+A collaborative real-time drawing application built with SvelteKit and a separate TypeScript API server. This project prioritizes self-hostability & being private. It is recommended to use Tailscale, or some other wireguard setup to have users access the site on their devices, and not expose it to the internet..
 
-- **Frontend**: SvelteKit application with adapter-node
-- **Backend**: Standalone TypeScript API server with Express.js and Socket.IO
-- **Database**: SQLite with automatic migrations
-- **Real-time**: Socket.IO for collaborative features
-
-## Project Structure
-
-```
-portalDraw/
-├── api/                    # TypeScript API server
-│   ├── src/
-│   │   ├── index.ts       # Server entry point
-│   │   ├── database.ts    # Database service
-│   │   ├── websocket.ts   # Socket.IO handler
-│   │   ├── routes/        # API routes
-│   │   └── migrations/    # Database migrations
-│   ├── package.json
-│   └── README.md
-├── src/                   # SvelteKit frontend
-│   ├── lib/
-│   │   ├── components/    # Svelte components
-│   │   ├── services/      # API services
-│   │   ├── stores/        # Svelte stores
-│   │   └── types.ts       # TypeScript types
-│   └── routes/            # SvelteKit routes
-├── package.json
-└── README.md
-```
 
 ## Getting Started
 
@@ -45,19 +21,13 @@ portalDraw/
 ### Installation
 
 1. **Install dependencies for both frontend and API:**
-
+ 
 ```bash
-npm install
-cd api && npm install && cd ..
+npm i
 ```
 
-2. **Set up environment variables:**
-
 ```bash
-cd api
-cp .env.example .env
-# Edit .env as needed
-cd ..
+cd api && npm install && cd ..
 ```
 
 ### Development
@@ -75,10 +45,9 @@ This will start:
 **Or run them separately:**
 
 ```bash
-# Terminal 1 - API server
 npm run dev:api
-
-# Terminal 2 - Frontend
+```
+```bash
 npm run dev:frontend
 ```
 
@@ -86,56 +55,24 @@ npm run dev:frontend
 
 ```bash
 npm run build
+```
+```bash
 npm start
 ```
 
-## Features
+## Notes & Disclaimers
 
-- **Real-time collaboration** - Multiple users can draw simultaneously
-- **Drawing tools** - Pen, eraser, highlighter with customizable sizes
-- **Board management** - Create, update, and manage drawing boards
-- **Session management** - Track active users and their cursors
-- **Auto-save** - All drawing events are automatically saved
-- **Cross-platform** - Works on desktop and mobile browsers
+### Logs
+Server logs are automatically saved to api.log in ``/api``.
 
-## API Documentation
+### AI Assistance
+This project was created with assistance from AI. It was NOT the majority product of AI, and it was simply used as a tool
 
-See [api/README.md](api/README.md) for detailed API documentation.
+### Public Demo
+There will be a public demo available for this application, but it will not always be up due to server load & resource management. I host many things on my server, and this application is primarly meant to be self-hosted, and used among friends/family.
 
-## Technology Stack
+### Config
+The config for this application is GLOBAL. This means that anyone with access to the application can change settings. If you do not want this behavior, please change ``globalSettings`` in ``src/lib/stores/settings.svelte.ts`` to ``false``. Please note that if you choose to disable thigs, some settings may not work as expected.
 
-### Frontend
-- SvelteKit with adapter-node
-- TypeScript
-- Tailwind CSS
-- Material Design 3 (m3-svelte)
-- Socket.IO client
-
-### Backend
-- Node.js with TypeScript
-- Express.js
-- Socket.IO
-- SQLite
-- Winston (logging)
-
-## Deployment
-
-The application can be deployed as:
-
-1. **Standalone servers** - Deploy API and frontend separately
-2. **Combined deployment** - Use the production start script to run both
-
-For production, consider:
-- Using a reverse proxy (nginx) for SSL and load balancing
-- Setting up proper environment variables
-- Configuring database backups
-- Setting up monitoring and logging
-
-## Migration Complete
-
-✅ **Server functions migrated to standalone API**
-✅ **TypeScript API server with Express.js and Socket.IO**
-✅ **SvelteKit configured with adapter-node**
-✅ **Database migrations moved to API server**
-✅ **WebSocket functionality migrated to Socket.IO**
-✅ **Frontend updated to consume external API**
+## Contributors
+[Cattn](https://github.com/cattn)
