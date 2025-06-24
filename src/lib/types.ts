@@ -16,6 +16,8 @@ export function getBaseURL(): string {
 	} else {
 		// Server-side: Always connect directly to the API server on localhost
 		const apiPort = process.env.PORT || '3001';
+		console.log('SSR environment - PORT:', process.env.PORT, 'HOST:', process.env.HOST, 'PUBLIC_PORT:', process.env.PUBLIC_PORT);
+		console.log('Using API port:', apiPort);
 		return `http://localhost:${apiPort}`;
 	}
 }
