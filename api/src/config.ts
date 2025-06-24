@@ -1,11 +1,7 @@
 import dotenv from 'dotenv';
+import path from 'path';
 
-dotenv.config();
-
-// Debug environment variables
-console.log('DEBUG: process.env.HOST =', process.env.HOST);
-console.log('DEBUG: process.env.PORT =', process.env.PORT);
-console.log('DEBUG: process.env.CORS_ORIGIN =', process.env.CORS_ORIGIN);
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const parseOrigins = (originsString: string): string | string[] => {
   const origins = originsString.split(',').map(origin => origin.trim());
