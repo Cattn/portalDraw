@@ -1,12 +1,11 @@
 import { DEFAULT_SETTINGS } from '$lib/types';
 import type { LayoutServerLoad } from './$types';
-
-const API_BASE_URL = 'http://localhost:3001';
+import { baseURL } from '$lib/types';
 
 export const load: LayoutServerLoad = async ({ fetch }) => {
 	try {
 		// Load settings from the API server using server-side fetch
-		const response = await fetch(`${API_BASE_URL}/api/settings`);
+		const response = await fetch(`${baseURL}/api/settings`);
 		
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}`);

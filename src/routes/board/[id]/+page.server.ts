@@ -1,12 +1,11 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { currentBoard } from '$lib/store';
-
-const API_BASE_URL = 'http://localhost:3001';
+import { baseURL } from '$lib/types';
 
 export const load: PageServerLoad = async ({ params, fetch }) => {
 	try {
-		const response = await fetch(`${API_BASE_URL}/api/boards/${params.id}`);
+		const response = await fetch(`${baseURL}/api/boards/${params.id}`);
 		
 		if (!response.ok) {
 			if (response.status === 404) {

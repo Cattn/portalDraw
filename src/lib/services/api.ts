@@ -1,15 +1,10 @@
 import { browser } from '$app/environment';
 import type { Board, DrawingEvent, BoardSession, AppSettings } from '$lib/types';
-
-const API_BASE_URL = browser 
-	? (window.location.hostname === 'localhost' 
-		? 'http://localhost:3001' 
-		: `${window.location.protocol}//${window.location.hostname}:3001`)
-	: '';
+import { baseURL } from '$lib/types';
 
 class ApiService {
 	private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-		const url = `${API_BASE_URL}/api${endpoint}`;
+		const url = `${baseURL}/api${endpoint}`;
 		
 		const defaultOptions: RequestInit = {
 			headers: {
@@ -51,7 +46,7 @@ class ApiService {
 	}
 
 	async deleteBoard(id: string): Promise<void> {
-		const url = `${API_BASE_URL}/api/boards/${id}`;
+		const url = `${baseURL}/api/boards/${id}`;
 		
 		const response = await fetch(url, {
 			method: 'DELETE',
@@ -105,7 +100,7 @@ class ApiService {
 
 	// Health check
 	async healthCheck(): Promise<{ status: string; timestamp: string; uptime: number }> {
-		const url = `${API_BASE_URL}/health`;
+		const url = `${baseURL}/health`;
 		const response = await fetch(url);
 		return response.json();
 	}

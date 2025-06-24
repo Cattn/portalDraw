@@ -34,6 +34,13 @@ cd api && npm install && cd ..
 
 Refer to ``.env.example`` for an example. Simply change the name to ``.env`` and change and variables you'd like. If you choose not to modify any values, everything shown in .env.example will be the default.
 
+**Need multiple origins for CORS? (Tailscale)**
+
+Modify your .env to include multiple origins, seperated by ``,``
+```bash
+CORS_ORIGIN=url1,url2,url3
+```
+
 ### Development
 
 **Start both API and frontend servers:**

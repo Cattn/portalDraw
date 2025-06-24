@@ -1,11 +1,10 @@
 import type { PageServerLoad } from './$types';
 import type { Board } from '$lib/types';
-
-const API_BASE_URL = 'http://localhost:3001';
+import { baseURL } from '$lib/types';
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	try {
-		const response = await fetch(`${API_BASE_URL}/api/boards`);
+		const response = await fetch(`${baseURL}/api/boards`);
 		
 		if (!response.ok) {
 			return {

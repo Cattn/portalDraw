@@ -1,8 +1,8 @@
 import { browser } from '$app/environment';
 import type { WebSocketMessage } from '$lib/types';
+import { baseURL } from '$lib/types';
 import io, { type Socket } from 'socket.io-client';
 
-const API_URL = browser ? (window.location.hostname === 'localhost' ? 'http://localhost:3001' : `${window.location.protocol}//${window.location.hostname}:3001`) : '';
 
 interface SessionData {
 	sessionId: string;
@@ -57,7 +57,7 @@ class WebSocketStore {
 		this.error = null;
 		
 		try {
-			this.socket = io(API_URL, {
+			this.socket = io(baseURL, {
 				transports: ['websocket', 'polling']
 			});
 			
