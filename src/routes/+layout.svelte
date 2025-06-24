@@ -4,7 +4,11 @@
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import { settingsStore } from '$lib/stores/settings.svelte';
 	import { onMount } from 'svelte';
-	import type { LayoutData } from './$types';
+	import type { AppSettings } from '$lib/types';
+
+	interface LayoutData {
+		settings: AppSettings;
+	}
 
 	let { children, data }: { children: any; data: LayoutData } = $props();
 
