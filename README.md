@@ -75,6 +75,8 @@ npm run build
 npm start
 ```
 
+> The frontend will start on :5024 for production builds. Please update your .env file if you plan on running the server in production mode.
+
 ## Notes & Disclaimers
 
 ### Logs
