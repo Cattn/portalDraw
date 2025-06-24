@@ -4,8 +4,9 @@ export function getBaseURL(): string {
 	if (typeof window !== 'undefined') {
 		const protocol = window.location.protocol;
 		const hostname = window.location.hostname;
-		const port = hostname === 'localhost' ? PUBLIC_PORT || '3001' : '';
-		return port ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`;
+		const port = PUBLIC_PORT || '3001';
+		const defaultPort = protocol === 'https:' ? '443' : '80';
+		return port !== defaultPort ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`;
 	} else {
 		const host = process.env.API_HOST || 'localhost';
 		const port = process.env.API_PORT || PUBLIC_PORT || '3001';
