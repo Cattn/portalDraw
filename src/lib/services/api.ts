@@ -2,6 +2,11 @@ import { browser } from '$app/environment';
 import type { Board, DrawingEvent, BoardSession, AppSettings } from '$lib/types';
 import { getBaseURL } from '$lib/types';
 
+// Extended API response interface for settings
+interface SettingsResponse extends AppSettings {
+	_globalSettingsDisabled?: boolean;
+}
+
 class ApiService {
 	private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
 		const baseURL = getBaseURL();
@@ -76,28 +81,39 @@ class ApiService {
 	}
 
 	// Settings API methods
-	async getSettings(): Promise<AppSettings> {
-		return this.request<AppSettings>('/settings');
+	async getSettings(): Promise<{ settings: AppSettings; globalSettingsDisabled: boolean }> {
+		const response = await this.request<SettingsResponse>('/settings');
+		const { _globalSettingsDisabled, ...settings } = response;
+		return {
+			settings: settings as AppSettings,
+			globalSettingsDisabled: _globalSettingsDisabled || false
+		};
 	}
 
 	async updateSettings(settings: Partial<AppSettings>): Promise<AppSettings> {
-		return this.request<AppSettings>('/settings', {
+		const response = await this.request<SettingsResponse>('/settings', {
 			method: 'PUT',
 			body: JSON.stringify(settings),
 		});
+		const { _globalSettingsDisabled, ...cleanSettings } = response;
+		return cleanSettings as AppSettings;
 	}
 
 	async resetSettings(): Promise<AppSettings> {
-		return this.request<AppSettings>('/settings/reset', {
+		const response = await this.request<SettingsResponse>('/settings/reset', {
 			method: 'POST',
 		});
+		const { _globalSettingsDisabled, ...cleanSettings } = response;
+		return cleanSettings as AppSettings;
 	}
 
 	async importSettings(settings: AppSettings): Promise<AppSettings> {
-		return this.request<AppSettings>('/settings/import', {
+		const response = await this.request<SettingsResponse>('/settings/import', {
 			method: 'POST',
 			body: JSON.stringify(settings),
 		});
+		const { _globalSettingsDisabled, ...cleanSettings } = response;
+		return cleanSettings as AppSettings;
 	}
 
 	// Health check

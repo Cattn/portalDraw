@@ -12,6 +12,7 @@
 
 	interface LayoutData {
 		settings: AppSettings;
+		globalSettingsDisabled: boolean;
 	}
 
 	let { children, data }: { children: any; data: LayoutData } = $props();
@@ -24,6 +25,13 @@
 		if (data.settings) {
 			// Initialize the store with server-loaded settings
 			settingsStore.initializeSettings(data.settings);
+		}
+
+		// Set the global settings disabled flag if provided
+		if (data.globalSettingsDisabled !== undefined) {
+			// Since we can't directly set private fields, we'll trigger a load
+			// which will set the flag based on server response
+			settingsStore.loadSettings();
 		}
 		
 		// Apply initial theme and accessibility

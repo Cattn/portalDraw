@@ -16,17 +16,20 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 			throw new Error(`HTTP ${response.status}`);
 		}
 		
-		const settings = await response.json();
+		const settingsResponse = await response.json();
+		const { _globalSettingsDisabled, ...settings } = settingsResponse;
 		
 		return {
-			settings
+			settings,
+			globalSettingsDisabled: _globalSettingsDisabled || false
 		};
 	} catch (error) {
 		console.error('Failed to load settings in layout:', error);
 		
 		// Return default settings as fallback
 		return {
-			settings: DEFAULT_SETTINGS
+			settings: DEFAULT_SETTINGS,
+			globalSettingsDisabled: false
 		};
 	}
 };

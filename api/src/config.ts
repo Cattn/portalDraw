@@ -37,5 +37,8 @@ export const config = {
       credentials: true,
       allowedHeaders: ['Content-Type', 'Authorization']
     }
+  },
+  settings: {
+    disableGlobalSettings: process.env.DISABLE_GLOBAL_SETTINGS === 'true'
   }
 };

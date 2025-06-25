@@ -295,6 +295,25 @@
 		</Button>
 	</div>
 
+	<!-- Local Mode Notice -->
+	{#if settingsStore.isLocalMode}
+		<Card 
+			variant="elevated" 
+			class="p-4 border-l-4 border-warning bg-warning-container"
+			{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 150, easing: quintOut } } : {}}
+		>
+			<div class="flex items-start gap-3">
+				<div class="w-5 h-5 rounded-full bg-warning flex-shrink-0 mt-0.5"></div>
+				<div>
+					<h3 class="m3-font-title-medium text-on-warning-container">Local Settings Mode</h3>
+					<p class="m3-font-body-small text-on-warning-container mt-1">
+						Global settings are disabled by server configuration. Your settings will be saved locally in your browser only and won't sync across devices.
+					</p>
+				</div>
+			</div>
+		</Card>
+	{/if}
+
 	<!-- Navigation -->
 	<Card 
 		variant="elevated" 
