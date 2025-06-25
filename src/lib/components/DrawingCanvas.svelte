@@ -4,7 +4,7 @@
 	import { websocketStore } from '$lib/stores/websocket.svelte';
 	import { collaborationStore } from '$lib/stores/collaboration.svelte';
 	import { settingsStore } from '$lib/stores/settings.svelte';
-	import type { Board, Point } from '$lib/types';
+	import type { Board, Point, DrawingTool } from '$lib/types';
 
 	interface Props {
 		board: Board;
@@ -24,6 +24,7 @@
 	let isPinching = false;
 	let lastPinchDistance: number | null = null;
 	let lastPinchCenter: Point | null = null;
+	let toolBeforePinch: DrawingTool | null = null;
 
 	// Create reactive cursor class based on current tool
 	let cursorClass = $state('cursor-crosshair');
@@ -76,6 +77,12 @@
 				isPinching = false;
 				lastPinchDistance = null;
 				lastPinchCenter = null;
+				
+				// Switch back to the tool that was active before pinching
+				if (toolBeforePinch) {
+					drawingStore.setTool(toolBeforePinch);
+					toolBeforePinch = null;
+				}
 			}
 			
 			if (isMouseDown) {
@@ -170,8 +177,9 @@
 				lastPanPoint = null;
 			}
 			
-			// Automatically switch to hand tool when pinching starts
+			// Remember current tool and switch to hand tool when pinching starts
 			if (drawingStore.currentTool.type !== 'hand') {
+				toolBeforePinch = { ...drawingStore.currentTool };
 				drawingStore.setTool({ ...drawingStore.currentTool, type: 'hand' });
 			}
 			
@@ -263,6 +271,12 @@
 				isPinching = false;
 				lastPinchDistance = null;
 				lastPinchCenter = null;
+				
+				// Switch back to the tool that was active before pinching
+				if (toolBeforePinch) {
+					drawingStore.setTool(toolBeforePinch);
+					toolBeforePinch = null;
+				}
 			}
 			return;
 		}
