@@ -91,7 +91,7 @@ This project was created with assistance from AI. It was NOT the majority produc
 There will be a public demo available for this application, but it will not always be up due to server load & resource management. I host many things on my server, and this application is primarly meant to be self-hosted, and used among friends/family.
 
 ### Config
-The config for this application is GLOBAL. This means that anyone with access to the application can change settings. If you do not want this behavior, please change ``globalSettings`` in ``src/lib/stores/settings.svelte.ts`` to ``false``. Please note that if you choose to disable thigs, some settings may not work as expected.
+The config for this application is GLOBAL. This means that anyone with access to the application can change settings. If you do not want this behavior, please change ``DISABLE_GLOBAL_SETTINGS`` in your ``.env`` to ``true``. Please note that if you choose to disable global settings, settings will be applied on a per-client basis which may lead to slightly conflicting experiences.
 
 ## Contributors
 [Cattn](https://github.com/cattn)
