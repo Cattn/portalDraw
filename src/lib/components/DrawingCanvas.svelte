@@ -20,6 +20,11 @@
 	let isPanning = false;
 	let lastPanPoint: Point | null = null;
 
+	// Pinch gesture state
+	let isPinching = false;
+	let lastPinchDistance: number | null = null;
+	let lastPinchCenter: Point | null = null;
+
 	// Create reactive cursor class based on current tool
 	let cursorClass = $state('cursor-crosshair');
 	
@@ -66,6 +71,13 @@
 		};
 		
 		const handleGlobalTouchEnd = (event: TouchEvent) => {
+			// Handle pinch gesture end
+			if (isPinching && event.touches.length < 2) {
+				isPinching = false;
+				lastPinchDistance = null;
+				lastPinchCenter = null;
+			}
+			
 			if (isMouseDown) {
 				isMouseDown = false;
 				if (isDrawing) {
@@ -122,8 +134,55 @@
 		};
 	}
 
+	function getTouchDistance(touch1: Touch, touch2: Touch): number {
+		const dx = touch1.clientX - touch2.clientX;
+		const dy = touch1.clientY - touch2.clientY;
+		return Math.sqrt(dx * dx + dy * dy);
+	}
+
+	function getTouchCenter(touch1: Touch, touch2: Touch): Point {
+		const rect = canvas.getBoundingClientRect();
+		return {
+			x: (touch1.clientX + touch2.clientX) / 2 - rect.left,
+			y: (touch1.clientY + touch2.clientY) / 2 - rect.top
+		};
+	}
+
 	function handlePointerDown(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
+		
+		// Handle multi-touch for pinch gestures
+		if ('touches' in event && event.touches.length === 2) {
+			// Start pinch gesture
+			isPinching = true;
+			lastPinchDistance = getTouchDistance(event.touches[0], event.touches[1]);
+			lastPinchCenter = getTouchCenter(event.touches[0], event.touches[1]);
+			
+			// Stop any current drawing or panning
+			if (isDrawing) {
+				isDrawing = false;
+				drawingStore.endStroke();
+				lastPoint = null;
+			}
+			if (isPanning) {
+				isPanning = false;
+				drawingStore.isPanning = false;
+				lastPanPoint = null;
+			}
+			
+			// Automatically switch to hand tool when pinching starts
+			if (drawingStore.currentTool.type !== 'hand') {
+				drawingStore.setTool({ ...drawingStore.currentTool, type: 'hand' });
+			}
+			
+			return;
+		}
+		
+		// Single touch or mouse - existing behavior
+		if ('touches' in event && event.touches.length > 1) {
+			return; // Ignore if more than 2 touches
+		}
+		
 		isMouseDown = true;
         
 		const point = getEventPoint(event);
@@ -143,6 +202,31 @@
 
 	function handlePointerMove(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
+		
+		// Handle pinch gesture
+		if ('touches' in event && event.touches.length === 2 && isPinching) {
+			const currentDistance = getTouchDistance(event.touches[0], event.touches[1]);
+			const currentCenter = getTouchCenter(event.touches[0], event.touches[1]);
+			
+			if (lastPinchDistance && lastPinchCenter) {
+				// Calculate zoom based on distance change
+				const zoomDelta = currentDistance / lastPinchDistance;
+				
+				// Apply zoom at the pinch center point
+				drawingStore.zoomAt(currentCenter, zoomDelta);
+				
+				// Update for next frame
+				lastPinchDistance = currentDistance;
+				lastPinchCenter = currentCenter;
+			}
+			
+			return;
+		}
+		
+		// Single touch or mouse - existing behavior
+		if ('touches' in event && event.touches.length > 1) {
+			return; // Ignore if more than 1 touch during non-pinch
+		}
 		
 		const point = getEventPoint(event);
 		
@@ -171,6 +255,18 @@
 
 	function handlePointerUp(event: MouseEvent | TouchEvent) {
 		event.preventDefault();
+		
+		// Handle end of pinch gesture
+		if ('touches' in event && isPinching) {
+			// End pinch if we have less than 2 touches
+			if (event.touches.length < 2) {
+				isPinching = false;
+				lastPinchDistance = null;
+				lastPinchCenter = null;
+			}
+			return;
+		}
+		
 		isMouseDown = false;
 		
 		if (isDrawing) {

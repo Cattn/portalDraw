@@ -3,4 +3,4 @@
   "ext": "ts,js,json",
   "ignore": ["config.json", "*.log", "node_modules/**/*", "dist/**/*"],
   "exec": "ts-node src/index.ts"
-} 
+}
