@@ -9,6 +9,7 @@
 	import { websocketStore } from '$lib/stores/websocket.svelte';
 	import { collaborationStore } from '$lib/stores/collaboration.svelte';
 	import { settingsStore } from '$lib/stores/settings.svelte';
+	import { currentBoard } from '$lib/store';
 	import { apiService } from '$lib/services/api';
 	import { fade, fly, slide, scale } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
@@ -48,6 +49,11 @@
 	
 	// Snackbar for notifications
 	let snackbar: ReturnType<typeof Snackbar> | undefined;
+	
+	// Update the global currentBoard store when board changes
+	$effect(() => {
+		currentBoard.set(board);
+	});
 	
 	// Helper function to show snackbar notifications safely
 	function showNotification(message: string, isError = false) {
@@ -295,6 +301,8 @@
 			websocketStore.disconnect();
 			window.removeEventListener('keyboard-save', handleKeyboardSave);
 			document.removeEventListener('keydown', handleHelpKeydown);
+			// Clear the current board when leaving the page
+			currentBoard.set(null);
 		};
 	});
 

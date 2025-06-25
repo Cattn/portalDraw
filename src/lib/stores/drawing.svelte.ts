@@ -758,6 +758,62 @@ class DrawingStore {
 			this.requestSyncEvent(this.currentBoardId);
 		}
 	}
+	
+	/**
+	 * Export canvas as JPG image
+	 */
+	exportCanvasAsImage(filename: string = 'canvas'): void {
+		if (!this.canvas) {
+			console.error('Canvas not available for export');
+			return;
+		}
+
+		try {
+			// Create a temporary canvas with the page background color for JPG export
+			const tempCanvas = document.createElement('canvas');
+			const tempCtx = tempCanvas.getContext('2d');
+			
+			if (!tempCtx) {
+				console.error('Failed to get temporary canvas context');
+				return;
+			}
+
+			// Set temporary canvas size to match the main canvas
+			tempCanvas.width = this.canvas.width;
+			tempCanvas.height = this.canvas.height;
+
+			// Get the background color from CSS custom property
+			const rootStyles = getComputedStyle(document.documentElement);
+			const backgroundColorRGB = rootStyles.getPropertyValue('--m3-scheme-surface-container-high').trim();
+			const backgroundColor = backgroundColorRGB ? `rgb(${backgroundColorRGB})` : '#ffffff';
+
+			// Fill with page background color for JPG
+			tempCtx.fillStyle = backgroundColor;
+			tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+			// Draw the main canvas content onto the temporary canvas
+			tempCtx.drawImage(this.canvas, 0, 0);
+
+			// Create download link
+			tempCanvas.toBlob((blob) => {
+				if (!blob) {
+					console.error('Failed to create image blob');
+					return;
+				}
+
+				const url = URL.createObjectURL(blob);
+				const link = document.createElement('a');
+				link.href = url;
+				link.download = `${filename}.jpg`;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+				URL.revokeObjectURL(url);
+			}, 'image/jpeg', 0.9);
+		} catch (error) {
+			console.error('Failed to export canvas as image:', error);
+		}
+	}
 }
 
 export const drawingStore = new DrawingStore(); 

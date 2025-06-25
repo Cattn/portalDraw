@@ -3,12 +3,15 @@
     import { apiService } from '$lib/services/api';
     import { goto } from '$app/navigation';
     import { settingsStore } from '$lib/stores/settings.svelte';
+    import { drawingStore } from '$lib/stores/drawing.svelte';
+    import { currentBoard } from '$lib/store';
     import { scale, fly } from 'svelte/transition';
     import { quintOut } from 'svelte/easing';
     import { onMount, onDestroy } from 'svelte';
     
     let isCreating = $state(false);
     let isVisible = $state(true);
+    let isSaving = $state(false);
 
     // Reactive variables for animation settings
     let animateTransitions = $derived(settingsStore.ui.animateTransitions);
@@ -46,6 +49,24 @@
             isCreating = false;
         }
     }
+    
+    function saveCanvasAsImage() {
+        if (isSaving || !drawingStore.canvas) return;
+        
+        isSaving = true;
+        try {
+            // Get current board name from store - use $currentBoard to get reactive value
+            const board = $currentBoard;
+            const boardName = board?.name ? board.name.replace(/[^a-z0-9]/gi, '_') : 'canvas_drawing';
+            
+            drawingStore.exportCanvasAsImage(boardName);
+        } catch (error) {
+            console.error('Failed to save canvas as image:', error);
+            alert('Failed to save canvas as image. Please try again.');
+        } finally {
+            isSaving = false;
+        }
+    }
 </script>
 
 {#if isVisible}
@@ -73,7 +94,11 @@
                 </svg>
                 </Button>
             </div>
-            
+        </div>
+        <div 
+            class="flex flex-col mb-5 items-center gap-4"
+            {...animateTransitions ? { in: scale, params: { duration: 400, delay: 400, easing: quintOut } } : {}}
+        >
             <Button 
                 square 
                 iconType="full" 
@@ -93,20 +118,24 @@
                     </svg>
                 {/if}
             </Button>
-        </div>
-        <div 
-            class="flex flex-col mb-5 items-center gap-4"
-            {...animateTransitions ? { in: scale, params: { duration: 400, delay: 400, easing: quintOut } } : {}}
-        >
-            <Button square iconType="full" variant="filled">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M9.6 15.65L12 13.8l2.4 1.85l-.9-3.05l2.25-1.6h-2.8L12 7.9l-.95 3.1h-2.8l2.25 1.6zm2.4.65l-3.7 2.825q-.275.225-.6.213t-.575-.188t-.387-.475t-.013-.65L8.15 13.4l-3.625-2.575q-.3-.2-.375-.525t.025-.6t.35-.488t.6-.212H9.6l1.45-4.8q.125-.35.388-.538T12 3.475t.563.188t.387.537L14.4 9h4.475q.35 0 .6.213t.35.487t.025.6t-.375.525L15.85 13.4l1.425 4.625q.125.35-.012.65t-.388.475t-.575.188t-.6-.213zm0-4.525" />
-                </svg>
-            </Button>
-            <Button square iconType="full" variant="filled">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm0-2h14V5H5zm0 0V5zm2-2h10q.3 0 .45-.275t-.05-.525l-2.75-3.675q-.15-.2-.4-.2t-.4.2L11.25 16L9.4 13.525q-.15-.2-.4-.2t-.4.2l-2 2.675q-.2.25-.05.525T7 17" />
-                </svg>
+            <Button 
+                square 
+                iconType="full" 
+                variant="filled"
+                onclick={saveCanvasAsImage}
+                disabled={isSaving || !drawingStore.canvas}
+                title={isSaving ? "Saving image..." : "Save canvas as image"}
+            >
+                {#if isSaving}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="animate-spin">
+                        <path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
+                        <path fill="currentColor" d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"/>
+                    </svg>
+                {:else}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm0-2h14V5H5zm0 0V5zm2-2h10q.3 0 .45-.275t-.05-.525l-2.75-3.675q-.15-.2-.4-.2t-.4.2L11.25 16L9.4 13.525q-.15-.2-.4-.2t-.4.2l-2 2.675q-.2.25-.05.525T7 17" />
+                    </svg>
+                {/if}
             </Button>
             <Button onclick={() => goto('/settings')} square iconType="full" variant="filled">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
