@@ -33,10 +33,24 @@ cd api && npm install && cd ..
 ```bash
 npm i -g concurrently
 ```
+2. **.env**
+
+Configure .env.config as you'd like, then rename it to .env.
+> If you'd like to just quickly deploy the project and run in development mode (for testing, or most use-cases), simply renaming ``.env.example`` --> ``.env`` will suffice.
+
+3. **Running**
+
+```bash
+npm run dev
+```
+
+4. **Use**
+
+Visit ``http://localhost:5173``!
 
 ### Setting Environment Variables
 
-Refer to ``.env.example`` for an example. Simply change the name to ``.env`` and change and variables you'd like. If you choose not to modify any values, everything shown in .env.example will be the default.
+Refer to ``.env.example`` for an example. Simply change the name to ``.env`` and change and variables you'd like. 
 
 > Ensure PUBLIC_PORT and PORT are the same if changed.
 
