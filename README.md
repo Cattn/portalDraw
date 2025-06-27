@@ -18,7 +18,7 @@ A collaborative real-time drawing application built with SvelteKit and a separat
 - Node.js (v18 or higher)
 - npm
 
-### Installation
+### Installation & Usage
 
 1. **Install dependencies for both frontend and API:**
  
