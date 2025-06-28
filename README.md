@@ -10,6 +10,8 @@
 
 A collaborative real-time drawing application built with SvelteKit and a separate TypeScript API server. This project prioritizes self-hostability & being private. It is recommended to use Tailscale, or some other wireguard setup to have users access the site on their devices, and not expose it to the internet..
 
+I personally view this project as the perfect solution to a self-hosted notes/drawing crossover that is meant to be shared with your close friends & family. Even if it's just leaving each other notes, putting up reminders, etc.
+
 
 ## Getting Started
 
@@ -99,7 +101,8 @@ npm start
 Server logs are automatically saved to api.log in ``/api``.
 
 ### AI Assistance
-This project was created with assistance from AI. It was NOT the majority product of AI, and it was simply used as a tool
+This project was created with assistance from AI. It was **NOT** the majority product of AI, and it was simply used as a tool
+> I feel the need to add this disclaimer because I believe AI use in projects, art, or any creative medium should be obviously labeled, allowing people to decide for themselves how they feel about it.
 
 ### Public Demo
 There will be a public demo available for this application, but it will not always be up due to server load & resource management. I host many things on my server, and this application is primarly meant to be self-hosted, and used among friends/family.
