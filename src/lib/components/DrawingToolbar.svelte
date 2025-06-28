@@ -13,7 +13,6 @@
 
 	let { toolbarCollapsed, toggleToolbar }: Props = $props();
 
-	// Reactive variables for animation settings
 	let animateTransitions = $derived(settingsStore.ui.animateTransitions);
 
 	const tools: { type: DrawingTool['type']; label: string; icon: string }[] = [
@@ -25,19 +24,24 @@
 	];
 
 	const sizes = [1, 2, 4, 8, 16];
-	const colors = ['#000000', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffa500'];
+	const colors = [
+		'#000000',
+		'#ff0000',
+		'#00ff00',
+		'#0000ff',
+		'#ffff00',
+		'#ff00ff',
+		'#00ffff',
+		'#ffa500'
+	];
 
-	// Create reactive variables to track the current state
 	let currentTool = $state<DrawingTool>({
 		type: 'pen',
 		size: 2,
 		opacity: 1
 	});
 	let currentColor = $state('#000000');
-	
 
-	
-	// Update reactive variables when store state changes
 	$effect(() => {
 		currentTool = drawingStore.currentTool;
 		currentColor = drawingStore.currentColor;
@@ -62,40 +66,42 @@
 		drawingStore.setColor(color);
 	}
 
-
-
 	function zoomIn() {
 		const centerX = window.innerWidth / 2;
 		const centerY = window.innerHeight / 2;
 		drawingStore.zoomAt({ x: centerX, y: centerY }, 1.2);
 	}
-	
+
 	function zoomOut() {
 		const centerX = window.innerWidth / 2;
 		const centerY = window.innerHeight / 2;
 		drawingStore.zoomAt({ x: centerX, y: centerY }, 1 / 1.2);
 	}
-	
+
 	function resetZoom() {
 		drawingStore.resetView();
 	}
-
-
 </script>
 
-<div 
-	class="flex items-center gap-4 p-3 bg-surface-container-high overflow-x-auto md:overflow-x-visible"
+<div
+	class="bg-surface-container-high flex items-center gap-4 overflow-x-auto p-3 md:overflow-x-visible"
 	{...animateTransitions ? { in: slide, params: { duration: 300, easing: quintOut } } : {}}
 >
-	<!-- Collapse button -->
-	<Button variant="tonal" onclick={toggleToolbar} square title="Collapse toolbar" aria-label="Collapse toolbar">
+	<Button
+		variant="tonal"
+		onclick={toggleToolbar}
+		square
+		title="Collapse toolbar"
+		aria-label="Collapse toolbar"
+	>
 		↑
 	</Button>
-	
-	<!-- Tools -->
-	<div 
-		class="flex items-center gap-2 flex-shrink-0"
-		{...animateTransitions ? { in: fly, params: { x: -20, duration: 400, delay: 100, easing: quintOut } } : {}}
+
+	<div
+		class="flex flex-shrink-0 items-center gap-2"
+		{...animateTransitions
+			? { in: fly, params: { x: -20, duration: 400, delay: 100, easing: quintOut } }
+			: {}}
 	>
 		<span class="text-sm font-medium">Tools:</span>
 		{#each tools as tool, index}
@@ -111,16 +117,17 @@
 		{/each}
 	</div>
 
-	<!-- Size (hide for hand tool) -->
 	{#if currentTool.type !== 'hand'}
-		<div 
-			class="flex items-center gap-2 flex-shrink-0"
-			{...animateTransitions ? { 
-				in: fly, 
-				params: { x: -20, duration: 400, delay: 200, easing: quintOut },
-				out: scale,
-				outparams: { duration: 200, easing: quintOut }
-			} : {}}
+		<div
+			class="flex flex-shrink-0 items-center gap-2"
+			{...animateTransitions
+				? {
+						in: fly,
+						params: { x: -20, duration: 400, delay: 200, easing: quintOut },
+						out: scale,
+						outparams: { duration: 200, easing: quintOut }
+					}
+				: {}}
 		>
 			<span class="text-sm font-medium">
 				{#if currentTool.type === 'stroke_eraser'}
@@ -139,7 +146,7 @@
 					title={`Size ${size}`}
 					aria-label={`Brush size ${size}`}
 				>
-					<div 
+					<div
 						class="rounded-full bg-current"
 						style="width: {Math.min(size * 2, 16)}px; height: {Math.min(size * 2, 16)}px;"
 					></div>
@@ -148,45 +155,48 @@
 		</div>
 	{/if}
 
-	<!-- Colors (hide for hand tool and erasers) -->
 	{#if currentTool.type !== 'hand' && currentTool.type !== 'eraser' && currentTool.type !== 'stroke_eraser'}
-		<div 
-			class="flex items-center gap-2 flex-shrink-0"
-			{...animateTransitions ? { 
-				in: fly, 
-				params: { x: -20, duration: 400, delay: 300, easing: quintOut },
-				out: scale,
-				outparams: { duration: 200, easing: quintOut }
-			} : {}}
+		<div
+			class="flex flex-shrink-0 items-center gap-2"
+			{...animateTransitions
+				? {
+						in: fly,
+						params: { x: -20, duration: 400, delay: 300, easing: quintOut },
+						out: scale,
+						outparams: { duration: 200, easing: quintOut }
+					}
+				: {}}
 		>
 			<span class="text-sm font-medium">Color:</span>
 			{#each colors as color}
 				<button
 					type="button"
-					class="w-8 h-8 rounded border-2 {currentColor === color ? 'border-gray-400' : 'border-gray-200'} transition-all duration-200 hover:scale-105"
+					class="h-8 w-8 rounded border-2 {currentColor === color
+						? 'border-gray-400'
+						: 'border-gray-200'} transition-all duration-200 hover:scale-105"
 					style="background-color: {color};"
 					onclick={() => selectColor(color)}
 					title={color}
 					aria-label={`Select color ${color}`}
 				></button>
 			{/each}
-			
-			<!-- Custom color picker -->
+
 			<input
 				type="color"
 				value={currentColor}
 				onchange={(e) => selectColor(e.currentTarget.value)}
-				class="w-8 h-8 rounded border-2 border-gray-200 cursor-pointer transition-all duration-200 hover:scale-105"
+				class="h-8 w-8 cursor-pointer rounded border-2 border-gray-200 transition-all duration-200 hover:scale-105"
 				title="Custom color"
 				aria-label="Select custom color"
 			/>
 		</div>
 	{/if}
 
-	<!-- Zoom controls -->
-	<div 
-		class="flex items-center gap-2 flex-shrink-0"
-		{...animateTransitions ? { in: fly, params: { x: -20, duration: 400, delay: 400, easing: quintOut } } : {}}
+	<div
+		class="flex flex-shrink-0 items-center gap-2"
+		{...animateTransitions
+			? { in: fly, params: { x: -20, duration: 400, delay: 400, easing: quintOut } }
+			: {}}
 	>
 		<span class="text-sm font-medium">Zoom:</span>
 		<Button variant="tonal" onclick={zoomOut} square title="Zoom out" aria-label="Zoom out">
@@ -195,15 +205,14 @@
 		<Button variant="tonal" onclick={resetZoom} title="Reset zoom" aria-label="Reset zoom">
 			{Math.round(drawingStore.zoom * 100)}%
 		</Button>
-		<Button variant="tonal" onclick={zoomIn} square title="Zoom in" aria-label="Zoom in">
-			+
-		</Button>
+		<Button variant="tonal" onclick={zoomIn} square title="Zoom in" aria-label="Zoom in">+</Button>
 	</div>
 
-	<!-- Actions -->
-	<div 
-		class="flex items-center gap-2 ml-auto flex-shrink-0"
-		{...animateTransitions ? { in: fly, params: { x: -20, duration: 400, delay: 500, easing: quintOut } } : {}}
+	<div
+		class="ml-auto flex flex-shrink-0 items-center gap-2"
+		{...animateTransitions
+			? { in: fly, params: { x: -20, duration: 400, delay: 500, easing: quintOut } }
+			: {}}
 	>
 		<Button variant="tonal" onclick={() => drawingStore.undo()} aria-label="Undo last action">
 			Undo
@@ -211,8 +220,8 @@
 		<Button variant="tonal" onclick={() => drawingStore.redo()} aria-label="Redo last action">
 			Redo
 		</Button>
-		<Button 
-			variant="tonal" 
+		<Button
+			variant="tonal"
 			onclick={() => {
 				if (confirm('Clear the entire canvas? This action cannot be undone.')) {
 					drawingStore.clear();

@@ -5,11 +5,9 @@ import { config } from '../config';
 export function createSettingsRouter(settingsConfig: SettingsConfig): Router {
 	const router = Router();
 
-	// GET /api/settings - Get current settings
 	router.get('/', async (req: Request, res: Response) => {
 		try {
 			const settings = settingsConfig.getSettings();
-			// Include the global settings disabled flag in the response
 			res.json({
 				...settings,
 				_globalSettingsDisabled: config.settings.disableGlobalSettings
@@ -19,10 +17,9 @@ export function createSettingsRouter(settingsConfig: SettingsConfig): Router {
 		}
 	});
 
-	// PUT /api/settings - Update settings
 	router.put('/', async (req: Request, res: Response) => {
 		if (config.settings.disableGlobalSettings) {
-			res.status(403).json({ 
+			res.status(403).json({
 				error: 'Global settings updates are disabled by configuration',
 				code: 'GLOBAL_SETTINGS_DISABLED'
 			});
@@ -41,10 +38,9 @@ export function createSettingsRouter(settingsConfig: SettingsConfig): Router {
 		}
 	});
 
-	// POST /api/settings/reset - Reset settings to defaults
 	router.post('/reset', async (req: Request, res: Response) => {
 		if (config.settings.disableGlobalSettings) {
-			res.status(403).json({ 
+			res.status(403).json({
 				error: 'Global settings reset is disabled by configuration',
 				code: 'GLOBAL_SETTINGS_DISABLED'
 			});
@@ -62,10 +58,9 @@ export function createSettingsRouter(settingsConfig: SettingsConfig): Router {
 		}
 	});
 
-	// POST /api/settings/import - Import settings
 	router.post('/import', async (req: Request, res: Response) => {
 		if (config.settings.disableGlobalSettings) {
-			res.status(403).json({ 
+			res.status(403).json({
 				error: 'Global settings import is disabled by configuration',
 				code: 'GLOBAL_SETTINGS_DISABLED'
 			});
@@ -85,4 +80,4 @@ export function createSettingsRouter(settingsConfig: SettingsConfig): Router {
 	});
 
 	return router;
-} 
+}

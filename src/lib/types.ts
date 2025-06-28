@@ -6,23 +6,19 @@ export function getBaseURL(): string {
 		const hostname = window.location.hostname;
 		const port = PUBLIC_PORT || '3001';
 		const defaultPort = protocol === 'https:' ? '443' : '80';
-		
-		// In production with HTTPS, don't append port if using standard port or if port matches default
+
 		if (protocol === 'https:' && (port === '443' || port === defaultPort)) {
 			return `${protocol}//${hostname}`;
 		}
-		
+
 		return port !== defaultPort ? `${protocol}//${hostname}:${port}` : `${protocol}//${hostname}`;
 	} else {
-		// Server-side: Always connect directly to the API server on localhost
-		// Environment variables are only available at runtime, not build time
 		const apiPort = process.env.PORT || '3001';
 		console.log('SSR runtime environment - PORT:', process.env.PORT, 'Using API port:', apiPort);
 		return `http://localhost:${apiPort}`;
 	}
 }
 
-// Make baseURL dynamic by calling the function instead of storing the result
 export const baseURL = getBaseURL();
 export interface Board {
 	id: string;
@@ -35,11 +31,11 @@ export interface Board {
 }
 
 export interface Stroke {
-    id: number;
-    boardId: number;
-    points: string;
-    color: string;
-    width: number;
+	id: number;
+	boardId: number;
+	points: string;
+	color: string;
+	width: number;
 }
 
 export interface DrawingEvent {
@@ -47,7 +43,12 @@ export interface DrawingEvent {
 	boardId: string;
 	sessionId: string;
 	type: 'stroke' | 'erase' | 'clear' | 'undo' | 'redo' | 'cursor' | 'stroke_deleted';
-	data: DrawingStroke | Point | { layers?: string[] } | { strokeIds?: string[] } | Record<string, unknown>;
+	data:
+		| DrawingStroke
+		| Point
+		| { layers?: string[] }
+		| { strokeIds?: string[] }
+		| Record<string, unknown>;
 	timestamp: number;
 	sequence: number;
 }
@@ -99,7 +100,6 @@ export interface WebSocketMessage {
 	timestamp: number;
 }
 
-// Settings types
 export interface AppSettings {
 	version: string;
 	exportDate?: string;
@@ -138,7 +138,6 @@ export interface AccessibilitySettings {
 	enableKeyboardShortcuts: boolean;
 }
 
-// Keyboard shortcut types
 export interface KeyboardShortcut {
 	key: string;
 	ctrl?: boolean;
@@ -148,14 +147,12 @@ export interface KeyboardShortcut {
 }
 
 export interface ShortcutSettings {
-	// Drawing tools
 	tools: {
 		pen: KeyboardShortcut;
 		highlighter: KeyboardShortcut;
 		eraser: KeyboardShortcut;
 		hand: KeyboardShortcut;
 	};
-	// Canvas actions
 	canvas: {
 		undo: KeyboardShortcut;
 		redo: KeyboardShortcut;
@@ -165,7 +162,6 @@ export interface ShortcutSettings {
 		resetZoom: KeyboardShortcut;
 		save: KeyboardShortcut;
 	};
-	// UI actions
 	ui: {
 		toggleSidebar: KeyboardShortcut;
 		settings: KeyboardShortcut;

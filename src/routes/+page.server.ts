@@ -5,15 +5,15 @@ import { baseURL } from '$lib/types';
 export const load: PageServerLoad = async ({ fetch }) => {
 	try {
 		const response = await fetch(`${baseURL}/api/boards`);
-		
+
 		if (!response.ok) {
 			return {
 				boards: []
 			};
 		}
-		
+
 		const boards: Board[] = await response.json();
-		
+
 		return {
 			boards
 		};

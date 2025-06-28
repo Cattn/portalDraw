@@ -31,7 +31,6 @@ class SettingsStore {
 		return this.#isLocalMode;
 	}
 
-	// Individual setting getters for convenience
 	get drawing() {
 		return this.#settings.drawing;
 	}
@@ -56,21 +55,14 @@ class SettingsStore {
 		return this.#settings.shortcuts;
 	}
 
-	/**
-	 * Initialize settings with server-loaded data
-	 */
 	initializeSettings(settings: AppSettings): void {
 		this.#settings = settings;
-		
-		// Check if we have local settings and global settings are disabled
+
 		if (browser && this.#globalSettingsDisabled) {
 			this.#loadLocalSettings();
 		}
 	}
 
-	/**
-	 * Load settings from the API
-	 */
 	async loadSettings(): Promise<void> {
 		this.#isLoading = true;
 		this.#error = null;
@@ -81,37 +73,29 @@ class SettingsStore {
 			this.#globalSettingsDisabled = result.globalSettingsDisabled;
 			this.#isLocalMode = this.#globalSettingsDisabled;
 
-			// If global settings are disabled, check for local settings
 			if (this.#globalSettingsDisabled && browser) {
 				this.#loadLocalSettings();
 			}
 		} catch (error) {
 			this.#error = error instanceof Error ? error.message : 'Failed to load settings';
 			console.error('Failed to load settings:', error);
-			// Keep default settings on error
 		} finally {
 			this.#isLoading = false;
 		}
 	}
 
-	/**
-	 * Update settings on the server or locally if global settings are disabled
-	 */
 	async updateSettings(updates: Partial<AppSettings>): Promise<void> {
 		this.#isLoading = true;
 		this.#error = null;
 
 		try {
 			if (this.#globalSettingsDisabled) {
-				// Update locally only
 				this.#updateLocalSettings(updates);
 			} else {
-				// Update on server
 				const updatedSettings = await apiService.updateSettings(updates);
 				this.#settings = updatedSettings;
 			}
 		} catch (error) {
-			// Check if this is a global settings disabled error
 			if (error instanceof Error && error.message.includes('Global settings')) {
 				console.log('Global settings disabled, switching to local mode');
 				this.#globalSettingsDisabled = true;
@@ -127,25 +111,19 @@ class SettingsStore {
 		}
 	}
 
-	/**
-	 * Reset settings to defaults
-	 */
 	async resetToDefaults(): Promise<void> {
 		this.#isLoading = true;
 		this.#error = null;
 
 		try {
 			if (this.#globalSettingsDisabled) {
-				// Reset locally only
 				this.#settings = { ...DEFAULT_SETTINGS };
 				this.#saveLocalSettings();
 			} else {
-				// Reset on server
 				const defaultSettings = await apiService.resetSettings();
 				this.#settings = defaultSettings;
 			}
 		} catch (error) {
-			// Check if this is a global settings disabled error
 			if (error instanceof Error && error.message.includes('Global settings')) {
 				console.log('Global settings disabled, resetting locally');
 				this.#globalSettingsDisabled = true;
@@ -162,25 +140,19 @@ class SettingsStore {
 		}
 	}
 
-	/**
-	 * Import settings from data
-	 */
 	async importSettings(importData: AppSettings): Promise<void> {
 		this.#isLoading = true;
 		this.#error = null;
 
 		try {
 			if (this.#globalSettingsDisabled) {
-				// Import locally only
 				this.#settings = { ...importData };
 				this.#saveLocalSettings();
 			} else {
-				// Import on server
 				const importedSettings = await apiService.importSettings(importData);
 				this.#settings = importedSettings;
 			}
 		} catch (error) {
-			// Check if this is a global settings disabled error
 			if (error instanceof Error && error.message.includes('Global settings')) {
 				console.log('Global settings disabled, importing locally');
 				this.#globalSettingsDisabled = true;
@@ -197,26 +169,20 @@ class SettingsStore {
 		}
 	}
 
-	/**
-	 * Export current settings
-	 */
 	exportSettings(): void {
 		try {
 			const settings = { ...this.#settings, exportDate: new Date().toISOString() };
 			const settingsJson = JSON.stringify(settings, null, 2);
-			
-			// Create blob and download link
+
 			const blob = new Blob([settingsJson], { type: 'application/json' });
 			const url = URL.createObjectURL(blob);
-			
-			// Create temporary download link
+
 			const a = document.createElement('a');
 			a.href = url;
 			a.download = this.#isLocalMode ? 'portal_draw_local.json' : 'portal_draw.json';
 			document.body.appendChild(a);
 			a.click();
-			
-			// Cleanup
+
 			document.body.removeChild(a);
 			URL.revokeObjectURL(url);
 		} catch (error) {
@@ -225,9 +191,6 @@ class SettingsStore {
 		}
 	}
 
-	/**
-	 * Update a specific section of settings
-	 */
 	async updateSection<K extends keyof AppSettings>(
 		section: K,
 		updates: Partial<AppSettings[K]>
@@ -242,9 +205,6 @@ class SettingsStore {
 		await this.updateSettings(sectionUpdates);
 	}
 
-	/**
-	 * Load local settings from localStorage
-	 */
 	#loadLocalSettings(): void {
 		if (!browser) return;
 
@@ -260,9 +220,6 @@ class SettingsStore {
 		}
 	}
 
-	/**
-	 * Save current settings to localStorage
-	 */
 	#saveLocalSettings(): void {
 		if (!browser) return;
 
@@ -273,15 +230,10 @@ class SettingsStore {
 		}
 	}
 
-	/**
-	 * Update settings locally and save to localStorage
-	 */
 	#updateLocalSettings(updates: Partial<AppSettings>): void {
-		// Merge updates with current settings
 		this.#settings = {
 			...this.#settings,
 			...updates,
-			// Deep merge nested objects
 			drawing: {
 				...this.#settings.drawing,
 				...(updates.drawing || {})
@@ -323,9 +275,6 @@ class SettingsStore {
 		this.#saveLocalSettings();
 	}
 
-	/**
-	 * Validate and merge settings with defaults to ensure all properties exist
-	 */
 	#validateAndMergeSettings(loadedSettings: any): AppSettings {
 		return {
 			version: loadedSettings.version || DEFAULT_SETTINGS.version,
@@ -370,4 +319,4 @@ class SettingsStore {
 	}
 }
 
-export const settingsStore = new SettingsStore(); 
+export const settingsStore = new SettingsStore();

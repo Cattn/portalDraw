@@ -1,5 +1,5 @@
-import type { Database } from 'sqlite3'
-import type { Board } from '$lib/types'
+import type { Database } from 'sqlite3';
+import type { Board } from '$lib/types';
 
 declare global {
 	namespace App {
@@ -12,7 +12,7 @@ declare global {
 		}
 		// interface PageState {}
 		// interface Platform {}
-		
+
 		interface WebSocketMessage {
 			type: string;
 			payload: Record<string, unknown>;
@@ -20,7 +20,7 @@ declare global {
 			userId?: string;
 			timestamp: number;
 		}
-		
+
 		interface SocketConnection {
 			id: string;
 			userId?: string;

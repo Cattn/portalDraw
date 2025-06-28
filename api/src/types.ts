@@ -13,7 +13,12 @@ export interface DrawingEvent {
 	boardId: string;
 	sessionId: string;
 	type: 'stroke' | 'erase' | 'clear' | 'undo' | 'redo' | 'cursor' | 'stroke_deleted';
-	data: DrawingStroke | Point | { layers?: string[] } | { strokeIds?: string[] } | Record<string, unknown>;
+	data:
+		| DrawingStroke
+		| Point
+		| { layers?: string[] }
+		| { strokeIds?: string[] }
+		| Record<string, unknown>;
 	timestamp: number;
 	sequence: number;
 }
@@ -63,4 +68,4 @@ export interface WebSocketMessage {
 	boardId: string;
 	sessionId: string;
 	timestamp: number;
-} 
+}

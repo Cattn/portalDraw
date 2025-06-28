@@ -1,59 +1,48 @@
 <script lang="ts">
-	import { 
-		Button, 
-		Card,
-		Snackbar
-	} from 'm3-svelte';
+	import { Button, Card, Snackbar } from 'm3-svelte';
 	import { goto } from '$app/navigation';
 	import { settingsStore } from '$lib/stores/settings.svelte';
 	import { fade, fly, slide, scale } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { quintOut, cubicOut } from 'svelte/easing';
 
-	// Settings state
 	let currentTab = $state('drawing');
-	
-	// File input for import
 	let fileInput = $state<HTMLInputElement>();
-	
-	// Snackbar for notifications
+
 	let snackbar: ReturnType<typeof Snackbar>;
-	
-	// Helper function to show snackbar notifications safely
+
 	function showNotification(message: string, isError = false) {
 		if (snackbar) {
-			snackbar.show({ 
-				message, 
-				closable: true 
+			snackbar.show({
+				message,
+				closable: true
 			});
 		}
 	}
-	
-	// Derived state for convenient access to settings
+
 	const drawing = $derived(settingsStore.drawing);
 	const ui = $derived(settingsStore.ui);
 	const collaboration = $derived(settingsStore.collaboration);
 	const account = $derived(settingsStore.account);
 	const accessibility = $derived(settingsStore.accessibility);
 	const shortcuts = $derived(settingsStore.shortcuts);
-	
-	// Reactive variables bound to individual settings for two-way binding
+
 	let defaultBrushSize = $derived.by(() => drawing.defaultBrushSize);
 	let defaultColor = $derived.by(() => drawing.defaultColor);
 	let smoothStrokes = $derived.by(() => drawing.smoothStrokes);
-	
+
 	let darkMode = $derived.by(() => ui.darkMode);
 	let animateTransitions = $derived.by(() => ui.animateTransitions);
-	
+
 	let showOtherCursors = $derived.by(() => collaboration.showOtherCursors);
 	let enableNotifications = $derived.by(() => collaboration.enableNotifications);
-	
+
 	let profileColor = $derived.by(() => account.profileColor);
-	
+
 	let highContrast = $derived.by(() => accessibility.highContrast);
 	let increaseFontSize = $derived.by(() => accessibility.increaseFontSize);
 	let enableKeyboardShortcuts = $derived.by(() => accessibility.enableKeyboardShortcuts);
-	
+
 	const tabs = [
 		{ id: 'drawing', label: 'Drawing' },
 		{ id: 'ui', label: 'Interface' },
@@ -62,7 +51,7 @@
 		{ id: 'accessibility', label: 'Accessibility' },
 		{ id: 'shortcuts', label: 'Shortcuts' }
 	];
-	
+
 	const tools = [
 		{ value: 'pen' as const, label: 'Pen' },
 		{ value: 'highlighter' as const, label: 'Highlighter' },
@@ -78,7 +67,7 @@
 			showNotification('Failed to save settings. Please try again.', true);
 		}
 	}
-	
+
 	async function resetToDefaults() {
 		if (confirm('Reset all settings to default values?')) {
 			try {
@@ -100,57 +89,57 @@
 			showNotification('Failed to export settings. Please try again.', true);
 		}
 	}
-	
+
 	function importSettings() {
-		// Trigger file input click
 		fileInput?.click();
 	}
-	
+
 	async function handleFileImport(event: Event) {
 		const input = event.target as HTMLInputElement;
 		const file = input.files?.[0];
-		
+
 		if (!file) return;
-		
-		// Check file type
+
 		if (!file.name.endsWith('.json')) {
 			showNotification('Please select a valid JSON file.', true);
 			return;
 		}
-		
+
 		const reader = new FileReader();
 		reader.onload = async (e) => {
 			try {
 				const content = e.target?.result as string;
 				const settings = JSON.parse(content);
-				
-				// Basic validation
+
 				if (!settings || typeof settings !== 'object') {
 					throw new Error('Invalid settings format');
 				}
-				
-				// Import the settings through the store
+
 				await settingsStore.importSettings(settings);
-				
+
 				showNotification('Settings imported successfully!');
 			} catch (error) {
 				console.error('Failed to import settings:', error);
-				showNotification('Failed to import settings. Please check that the file is a valid PortalDraw settings file.', true);
+				showNotification(
+					'Failed to import settings. Please check that the file is a valid PortalDraw settings file.',
+					true
+				);
 			}
 		};
-		
+
 		reader.onerror = () => {
 			showNotification('Failed to read the file. Please try again.', true);
 		};
-		
+
 		reader.readAsText(file);
-		
-		// Reset file input
+
 		input.value = '';
 	}
 
-	// Helper functions for updating specific settings
-	async function updateDrawingSetting<K extends keyof typeof drawing>(key: K, value: typeof drawing[K]) {
+	async function updateDrawingSetting<K extends keyof typeof drawing>(
+		key: K,
+		value: (typeof drawing)[K]
+	) {
 		try {
 			await settingsStore.updateSection('drawing', { [key]: value });
 			showNotification('Drawing setting updated');
@@ -160,7 +149,7 @@
 		}
 	}
 
-	async function updateUISetting<K extends keyof typeof ui>(key: K, value: typeof ui[K]) {
+	async function updateUISetting<K extends keyof typeof ui>(key: K, value: (typeof ui)[K]) {
 		try {
 			await settingsStore.updateSection('ui', { [key]: value });
 			showNotification('UI setting updated');
@@ -170,7 +159,10 @@
 		}
 	}
 
-	async function updateCollaborationSetting<K extends keyof typeof collaboration>(key: K, value: typeof collaboration[K]) {
+	async function updateCollaborationSetting<K extends keyof typeof collaboration>(
+		key: K,
+		value: (typeof collaboration)[K]
+	) {
 		try {
 			await settingsStore.updateSection('collaboration', { [key]: value });
 			showNotification('Collaboration setting updated');
@@ -180,7 +172,10 @@
 		}
 	}
 
-	async function updateAccountSetting<K extends keyof typeof account>(key: K, value: typeof account[K]) {
+	async function updateAccountSetting<K extends keyof typeof account>(
+		key: K,
+		value: (typeof account)[K]
+	) {
 		try {
 			await settingsStore.updateSection('account', { [key]: value });
 			showNotification('Account setting updated');
@@ -190,7 +185,10 @@
 		}
 	}
 
-	async function updateAccessibilitySetting<K extends keyof typeof accessibility>(key: K, value: typeof accessibility[K]) {
+	async function updateAccessibilitySetting<K extends keyof typeof accessibility>(
+		key: K,
+		value: (typeof accessibility)[K]
+	) {
 		try {
 			await settingsStore.updateSection('accessibility', { [key]: value });
 			showNotification('Accessibility setting updated');
@@ -200,7 +198,10 @@
 		}
 	}
 
-	async function updateShortcutSetting<K extends keyof typeof shortcuts>(key: K, value: typeof shortcuts[K]) {
+	async function updateShortcutSetting<K extends keyof typeof shortcuts>(
+		key: K,
+		value: (typeof shortcuts)[K]
+	) {
 		try {
 			await settingsStore.updateSection('shortcuts', { [key]: value });
 			showNotification('Shortcut updated');
@@ -209,8 +210,6 @@
 			showNotification('Failed to update shortcut setting', true);
 		}
 	}
-
-	// Keyboard shortcut capture state
 	let capturingShortcut = $state<string | null>(null);
 	let tempShortcut = $state({ key: '', ctrl: false, alt: false, shift: false, meta: false });
 
@@ -226,16 +225,14 @@
 
 	function handleShortcutKeydown(event: KeyboardEvent) {
 		if (!capturingShortcut) return;
-		
+
 		event.preventDefault();
 		event.stopPropagation();
 
-		// Special handling for modifier keys
 		if (['Control', 'Alt', 'Shift', 'Meta'].includes(event.key)) {
 			return;
 		}
 
-		// Update temp shortcut
 		tempShortcut = {
 			key: event.key,
 			ctrl: event.ctrlKey,
@@ -250,7 +247,7 @@
 
 		const [category, action] = capturingShortcut.split('.');
 		const categoryKey = category as keyof typeof shortcuts;
-		const actionKey = action as keyof typeof shortcuts[typeof categoryKey];
+		const actionKey = action as keyof (typeof shortcuts)[typeof categoryKey];
 
 		const updatedCategory = {
 			...shortcuts[categoryKey],
@@ -278,9 +275,8 @@
 
 <svelte:window onkeydown={handleShortcutKeydown} />
 
-<div class="max-w-4xl mx-auto p-6 space-y-6">
-	<!-- Header -->
-	<div 
+<div class="mx-auto max-w-4xl space-y-6 p-6">
+	<div
 		class="flex items-center justify-between"
 		{...animateTransitions ? { in: fade, params: { duration: 500, delay: 100 } } : {}}
 	>
@@ -290,41 +286,42 @@
 				Customize your PortalDraw experience
 			</p>
 		</div>
-		<Button variant="outlined" onclick={() => goto('/')}>
-			Back to App
-		</Button>
+		<Button variant="outlined" onclick={() => goto('/')}>Back to App</Button>
 	</div>
 
-	<!-- Local Mode Notice -->
 	{#if settingsStore.isLocalMode}
-		<Card 
-			variant="elevated" 
-			class="p-4 border-l-4 border-warning bg-warning-container"
-			{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 150, easing: quintOut } } : {}}
+		<Card
+			variant="elevated"
+			class="border-warning bg-warning-container border-l-4 p-4"
+			{...animateTransitions
+				? { in: fly, params: { y: 20, duration: 400, delay: 150, easing: quintOut } }
+				: {}}
 		>
 			<div class="flex items-start gap-3">
-				<div class="w-5 h-5 rounded-full bg-warning flex-shrink-0 mt-0.5"></div>
+				<div class="bg-warning mt-0.5 h-5 w-5 flex-shrink-0 rounded-full"></div>
 				<div>
 					<h3 class="m3-font-title-medium text-on-warning-container">Local Settings Mode</h3>
 					<p class="m3-font-body-small text-on-warning-container mt-1">
-						Global settings are disabled by server configuration. Your settings will be saved locally in your browser only and won't sync across devices.
+						Global settings are disabled by server configuration. Your settings will be saved
+						locally in your browser only and won't sync across devices.
 					</p>
 				</div>
 			</div>
 		</Card>
 	{/if}
 
-	<!-- Navigation -->
-	<Card 
-		variant="elevated" 
+	<Card
+		variant="elevated"
 		class="p-4"
-		{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } } : {}}
+		{...animateTransitions
+			? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } }
+			: {}}
 	>
 		<div class="flex flex-wrap gap-2">
 			{#each tabs as tab, index (tab.id)}
 				<Button
 					variant={currentTab === tab.id ? 'filled' : 'outlined'}
-					onclick={() => currentTab = tab.id}
+					onclick={() => (currentTab = tab.id)}
 				>
 					{tab.label}
 				</Button>
@@ -332,23 +329,24 @@
 		</div>
 	</Card>
 
-	<!-- Drawing Settings -->
 	{#if currentTab === 'drawing'}
-		<div 
+		<div
 			class="space-y-4"
 			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
 		>
-			<Card 
-				variant="elevated" 
+			<Card
+				variant="elevated"
 				class="p-6"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } } : {}}
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } }
+					: {}}
 			>
 				<h2 class="m3-font-headline-small mb-4">Default Drawing Tools</h2>
-				
+
 				<div class="space-y-4">
 					<div>
 						<!-- svelte-ignore a11y_label_has_associated_control -->
-						<label class="m3-font-body-medium block mb-2">Default Tool</label>
+						<label class="m3-font-body-medium mb-2 block">Default Tool</label>
 						<div class="flex gap-2">
 							{#each tools as tool}
 								<Button
@@ -360,10 +358,12 @@
 							{/each}
 						</div>
 					</div>
-					
+
 					<div>
 						<!-- svelte-ignore a11y_label_has_associated_control -->
-						<label class="m3-font-body-medium block mb-2">Default Brush Size: {drawing.defaultBrushSize}px</label>
+						<label class="m3-font-body-medium mb-2 block"
+							>Default Brush Size: {drawing.defaultBrushSize}px</label
+						>
 						<input
 							type="range"
 							min="1"
@@ -376,37 +376,41 @@
 							class="range-input"
 						/>
 					</div>
-					
+
 					<div>
 						<!-- svelte-ignore a11y_label_has_associated_control -->
-						<label class="m3-font-body-medium block mb-2">Default Color</label>
-						<input 
-							type="color" 
+						<label class="m3-font-body-medium mb-2 block">Default Color</label>
+						<input
+							type="color"
 							value={drawing.defaultColor}
 							onchange={(e) => {
 								const target = e.target as HTMLInputElement;
 								updateDrawingSetting('defaultColor', target.value);
 							}}
-							class="w-16 h-10 rounded border-2 border-outline cursor-pointer"
+							class="border-outline h-10 w-16 cursor-pointer rounded border-2"
 						/>
 					</div>
 				</div>
 			</Card>
 
-			<Card 
-				variant="elevated" 
+			<Card
+				variant="elevated"
 				class="p-6"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } } : {}}
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } }
+					: {}}
 			>
 				<h2 class="m3-font-headline-small mb-4">Drawing Behavior</h2>
-				
+
 				<div class="space-y-4">
 					<div class="flex items-center justify-between">
 						<div>
 							<p class="m3-font-body-medium">Smooth Strokes</p>
-							<p class="m3-font-body-small text-on-surface-variant">Apply smoothing to drawn lines</p>
+							<p class="m3-font-body-small text-on-surface-variant">
+								Apply smoothing to drawn lines
+							</p>
 						</div>
-						<label class="flex items-center cursor-pointer">
+						<label class="flex cursor-pointer items-center">
 							<input
 								type="checkbox"
 								checked={drawing.smoothStrokes}
@@ -426,26 +430,27 @@
 		</div>
 	{/if}
 
-	<!-- UI Settings -->
 	{#if currentTab === 'ui'}
-		<div 
+		<div
 			class="space-y-4"
 			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
 		>
-			<Card 
-				variant="elevated" 
+			<Card
+				variant="elevated"
 				class="p-6"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } } : {}}
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } }
+					: {}}
 			>
 				<h2 class="m3-font-headline-small mb-4">Appearance</h2>
-				
+
 				<div class="space-y-4">
 					<div class="flex items-center justify-between">
 						<div>
 							<p class="m3-font-body-medium">Dark Mode</p>
 							<p class="m3-font-body-small text-on-surface-variant">Use dark color scheme</p>
 						</div>
-						<label class="flex items-center cursor-pointer">
+						<label class="flex cursor-pointer items-center">
 							<input
 								type="checkbox"
 								checked={ui.darkMode}
@@ -460,13 +465,15 @@
 							</div>
 						</label>
 					</div>
-					
+
 					<div class="flex items-center justify-between">
 						<div>
 							<p class="m3-font-body-medium">Animate Transitions</p>
-							<p class="m3-font-body-small text-on-surface-variant">Enable UI animations and transitions</p>
+							<p class="m3-font-body-small text-on-surface-variant">
+								Enable UI animations and transitions
+							</p>
 						</div>
-						<label class="flex items-center cursor-pointer">
+						<label class="flex cursor-pointer items-center">
 							<input
 								type="checkbox"
 								checked={ui.animateTransitions}
@@ -486,26 +493,29 @@
 		</div>
 	{/if}
 
-	<!-- Collaboration Settings -->
 	{#if currentTab === 'collaboration'}
-		<div 
+		<div
 			class="space-y-4"
 			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
 		>
-			<Card 
-				variant="elevated" 
+			<Card
+				variant="elevated"
 				class="p-6"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } } : {}}
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } }
+					: {}}
 			>
 				<h2 class="m3-font-headline-small mb-4">Multiplayer Experience</h2>
-				
+
 				<div class="space-y-4">
 					<div class="flex items-center justify-between">
 						<div>
 							<p class="m3-font-body-medium">Show Other Cursors</p>
-							<p class="m3-font-body-small text-on-surface-variant">Display cursors of other users</p>
+							<p class="m3-font-body-small text-on-surface-variant">
+								Display cursors of other users
+							</p>
 						</div>
-						<label class="flex items-center cursor-pointer">
+						<label class="flex cursor-pointer items-center">
 							<input
 								type="checkbox"
 								checked={collaboration.showOtherCursors}
@@ -520,13 +530,15 @@
 							</div>
 						</label>
 					</div>
-					
+
 					<div class="flex items-center justify-between">
 						<div>
 							<p class="m3-font-body-medium">Enable Notifications</p>
-							<p class="m3-font-body-small text-on-surface-variant">Get notified when users join/leave</p>
+							<p class="m3-font-body-small text-on-surface-variant">
+								Get notified when users join/leave
+							</p>
 						</div>
-						<label class="flex items-center cursor-pointer">
+						<label class="flex cursor-pointer items-center">
 							<input
 								type="checkbox"
 								checked={collaboration.enableNotifications}
@@ -537,7 +549,9 @@
 								class="sr-only"
 							/>
 							<div class={`toggle-switch ${collaboration.enableNotifications ? 'checked' : ''}`}>
-								<div class={`toggle-knob ${collaboration.enableNotifications ? 'checked' : ''}`}></div>
+								<div
+									class={`toggle-knob ${collaboration.enableNotifications ? 'checked' : ''}`}
+								></div>
 							</div>
 						</label>
 					</div>
@@ -546,54 +560,52 @@
 		</div>
 	{/if}
 
-	<!-- Account Settings -->
 	{#if currentTab === 'account'}
-		<div 
+		<div
 			class="space-y-4"
 			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
 		>
-			<Card 
-				variant="elevated" 
+			<Card
+				variant="elevated"
 				class="p-6"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } } : {}}
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } }
+					: {}}
 			>
 				<h2 class="m3-font-headline-small mb-4">Profile Information</h2>
-				
+
 				<div class="space-y-4">
 					<div>
 						<!-- svelte-ignore a11y_label_has_associated_control -->
-						<label class="m3-font-body-medium block mb-2">Profile Color</label>
-						<input 
-							type="color" 
+						<label class="m3-font-body-medium mb-2 block">Profile Color</label>
+						<input
+							type="color"
 							value={account.profileColor}
 							onchange={(e) => {
 								const target = e.target as HTMLInputElement;
 								updateAccountSetting('profileColor', target.value);
 							}}
-							class="w-16 h-10 rounded border-2 border-outline cursor-pointer"
+							class="border-outline h-10 w-16 cursor-pointer rounded border-2"
 						/>
 					</div>
 				</div>
 			</Card>
 
-			<Card 
-				variant="elevated" 
+			<Card
+				variant="elevated"
 				class="p-6"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } } : {}}
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } }
+					: {}}
 			>
 				<h2 class="m3-font-headline-small mb-4">Data Management</h2>
-				
+
 				<div class="space-y-4">
-					<Button variant="outlined" onclick={exportSettings}>
-						Export Settings
-					</Button>
-					<Button variant="outlined" onclick={importSettings}>
-						Import Settings
-					</Button>
-					<!-- Hidden file input for import -->
-					<input 
+					<Button variant="outlined" onclick={exportSettings}>Export Settings</Button>
+					<Button variant="outlined" onclick={importSettings}>Import Settings</Button>
+					<input
 						bind:this={fileInput}
-						type="file" 
+						type="file"
 						accept=".json"
 						onchange={handleFileImport}
 						style="display: none;"
@@ -603,49 +615,60 @@
 		</div>
 	{/if}
 
-	<!-- Accessibility Settings -->
 	{#if currentTab === 'accessibility'}
-		<div 
+		<div
 			class="space-y-4"
 			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
 		>
-			<!-- Warning Card -->
-			<Card 
-				variant="elevated" 
-				class="p-6 border-l-4 border-l-yellow-500 bg-yellow-50 dark:bg-yellow-900/20"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 50, easing: quintOut } } : {}}
+			<Card
+				variant="elevated"
+				class="border-l-4 border-l-yellow-500 bg-yellow-50 p-6 dark:bg-yellow-900/20"
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 50, easing: quintOut } }
+					: {}}
 			>
 				<div class="flex items-start gap-3">
-					<div class="flex-shrink-0 mt-1">
-						<iconify-icon icon="material-symbols:warning" class="text-yellow-600 dark:text-yellow-400 text-xl"></iconify-icon>
+					<div class="mt-1 flex-shrink-0">
+						<iconify-icon
+							icon="material-symbols:warning"
+							class="text-xl text-yellow-600 dark:text-yellow-400"
+						></iconify-icon>
 					</div>
 					<div>
-						<h3 class="m3-font-title-medium text-yellow-800 dark:text-yellow-200 mb-2">Accessibility Notice</h3>
-						<p class="m3-font-body-medium text-yellow-700 dark:text-yellow-300 mb-2">
-							These accessibility features are designed for users with specific visual needs and may significantly alter the appearance and usability of the application.
+						<h3 class="m3-font-title-medium mb-2 text-yellow-800 dark:text-yellow-200">
+							Accessibility Notice
+						</h3>
+						<p class="m3-font-body-medium mb-2 text-yellow-700 dark:text-yellow-300">
+							These accessibility features are designed for users with specific visual needs and may
+							significantly alter the appearance and usability of the application.
 						</p>
 						<p class="m3-font-body-small text-yellow-600 dark:text-yellow-400">
-							<strong>High Contrast</strong> and <strong>Large Fonts</strong> are intended for users with visual impairments. 
-							Most users should leave these settings disabled for the optimal experience.
+							<strong>High Contrast</strong> and <strong>Large Fonts</strong> are intended for users
+							with visual impairments. Most users should leave these settings disabled for the optimal
+							experience.
 						</p>
 					</div>
 				</div>
 			</Card>
 
-			<Card 
-				variant="elevated" 
+			<Card
+				variant="elevated"
 				class="p-6"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } } : {}}
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } }
+					: {}}
 			>
 				<h2 class="m3-font-headline-small mb-4">Visual Accessibility</h2>
-				
+
 				<div class="space-y-4">
 					<div class="flex items-center justify-between">
 						<div>
 							<p class="m3-font-body-medium">High Contrast</p>
-							<p class="m3-font-body-small text-on-surface-variant">Increase contrast for better visibility</p>
+							<p class="m3-font-body-small text-on-surface-variant">
+								Increase contrast for better visibility
+							</p>
 						</div>
-						<label class="flex items-center cursor-pointer">
+						<label class="flex cursor-pointer items-center">
 							<input
 								type="checkbox"
 								checked={accessibility.highContrast}
@@ -660,13 +683,15 @@
 							</div>
 						</label>
 					</div>
-					
+
 					<div class="flex items-center justify-between">
 						<div>
 							<p class="m3-font-body-medium">Increase Font Size</p>
-							<p class="m3-font-body-small text-on-surface-variant">Use larger text throughout the app</p>
+							<p class="m3-font-body-small text-on-surface-variant">
+								Use larger text throughout the app
+							</p>
 						</div>
-						<label class="flex items-center cursor-pointer">
+						<label class="flex cursor-pointer items-center">
 							<input
 								type="checkbox"
 								checked={accessibility.increaseFontSize}
@@ -684,20 +709,24 @@
 				</div>
 			</Card>
 
-			<Card 
-				variant="elevated" 
+			<Card
+				variant="elevated"
 				class="p-6"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } } : {}}
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } }
+					: {}}
 			>
 				<h2 class="m3-font-headline-small mb-4">Input & Navigation</h2>
-				
+
 				<div class="space-y-4">
 					<div class="flex items-center justify-between">
 						<div>
 							<p class="m3-font-body-medium">Keyboard Shortcuts</p>
-							<p class="m3-font-body-small text-on-surface-variant">Enable keyboard navigation and shortcuts</p>
+							<p class="m3-font-body-small text-on-surface-variant">
+								Enable keyboard navigation and shortcuts
+							</p>
 						</div>
-						<label class="flex items-center cursor-pointer">
+						<label class="flex cursor-pointer items-center">
 							<input
 								type="checkbox"
 								checked={accessibility.enableKeyboardShortcuts}
@@ -707,8 +736,12 @@
 								}}
 								class="sr-only"
 							/>
-							<div class={`toggle-switch ${accessibility.enableKeyboardShortcuts ? 'checked' : ''}`}>
-								<div class={`toggle-knob ${accessibility.enableKeyboardShortcuts ? 'checked' : ''}`}></div>
+							<div
+								class={`toggle-switch ${accessibility.enableKeyboardShortcuts ? 'checked' : ''}`}
+							>
+								<div
+									class={`toggle-knob ${accessibility.enableKeyboardShortcuts ? 'checked' : ''}`}
+								></div>
 							</div>
 						</label>
 					</div>
@@ -717,42 +750,50 @@
 		</div>
 	{/if}
 
-	<!-- Keyboard Shortcuts Settings -->
 	{#if currentTab === 'shortcuts'}
-		<div 
+		<div
 			class="space-y-4"
 			{...animateTransitions ? { in: slide, params: { duration: 300, easing: cubicOut } } : {}}
 		>
-			<!-- Info Card -->
-			<Card 
-				variant="elevated" 
-				class="p-6 border-l-4 border-l-blue-500 bg-blue-50 dark:bg-blue-900/20"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 50, easing: quintOut } } : {}}
+			<Card
+				variant="elevated"
+				class="border-l-4 border-l-blue-500 bg-blue-50 p-6 dark:bg-blue-900/20"
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 50, easing: quintOut } }
+					: {}}
 			>
 				<div class="flex items-start gap-3">
-					<div class="flex-shrink-0 mt-1">
-						<iconify-icon icon="material-symbols:keyboard" class="text-blue-600 dark:text-blue-400 text-xl"></iconify-icon>
+					<div class="mt-1 flex-shrink-0">
+						<iconify-icon
+							icon="material-symbols:keyboard"
+							class="text-xl text-blue-600 dark:text-blue-400"
+						></iconify-icon>
 					</div>
 					<div>
-						<h3 class="m3-font-title-medium text-blue-800 dark:text-blue-200 mb-2">Keyboard Shortcuts</h3>
-						<p class="m3-font-body-medium text-blue-700 dark:text-blue-300 mb-2">
-							Customize keyboard shortcuts for tools and actions. Click on any shortcut to change it.
+						<h3 class="m3-font-title-medium mb-2 text-blue-800 dark:text-blue-200">
+							Keyboard Shortcuts
+						</h3>
+						<p class="m3-font-body-medium mb-2 text-blue-700 dark:text-blue-300">
+							Customize keyboard shortcuts for tools and actions. Click on any shortcut to change
+							it.
 						</p>
 						<p class="m3-font-body-small text-blue-600 dark:text-blue-400">
-							Shortcuts will only work when the <strong>Enable Keyboard Shortcuts</strong> option is turned on in Accessibility settings.
+							Shortcuts will only work when the <strong>Enable Keyboard Shortcuts</strong> option is
+							turned on in Accessibility settings.
 						</p>
 					</div>
 				</div>
 			</Card>
 
-			<!-- Drawing Tools Shortcuts -->
-			<Card 
-				variant="elevated" 
+			<Card
+				variant="elevated"
 				class="p-6"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } } : {}}
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 100, easing: quintOut } }
+					: {}}
 			>
 				<h2 class="m3-font-headline-small mb-4">Drawing Tools</h2>
-				
+
 				<div class="space-y-4">
 					<div class="flex items-center justify-between">
 						<div>
@@ -760,14 +801,12 @@
 							<p class="m3-font-body-small text-on-surface-variant">Switch to pen drawing tool</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'tools.pen'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('tools.pen')}
-							>
-								{capturingShortcut === 'tools.pen' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.tools.pen)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('tools.pen')}>
+								{capturingShortcut === 'tools.pen'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.tools.pen)}
 							</Button>
 						</div>
 					</div>
@@ -777,15 +816,16 @@
 							<p class="m3-font-body-medium">Highlighter Tool</p>
 							<p class="m3-font-body-small text-on-surface-variant">Switch to highlighter tool</p>
 						</div>
-						<div class="shortcut-button" class:capturing={capturingShortcut === 'tools.highlighter'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('tools.highlighter')}
-							>
-								{capturingShortcut === 'tools.highlighter' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.tools.highlighter)
-								}
+						<div
+							class="shortcut-button"
+							class:capturing={capturingShortcut === 'tools.highlighter'}
+						>
+							<Button variant="outlined" onclick={() => startShortcutCapture('tools.highlighter')}>
+								{capturingShortcut === 'tools.highlighter'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.tools.highlighter)}
 							</Button>
 						</div>
 					</div>
@@ -796,14 +836,12 @@
 							<p class="m3-font-body-small text-on-surface-variant">Switch to eraser tool</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'tools.eraser'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('tools.eraser')}
-							>
-								{capturingShortcut === 'tools.eraser' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.tools.eraser)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('tools.eraser')}>
+								{capturingShortcut === 'tools.eraser'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.tools.eraser)}
 							</Button>
 						</div>
 					</div>
@@ -814,28 +852,27 @@
 							<p class="m3-font-body-small text-on-surface-variant">Switch to pan/hand tool</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'tools.hand'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('tools.hand')}
-							>
-								{capturingShortcut === 'tools.hand' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.tools.hand)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('tools.hand')}>
+								{capturingShortcut === 'tools.hand'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.tools.hand)}
 							</Button>
 						</div>
 					</div>
 				</div>
 			</Card>
 
-			<!-- Canvas Actions Shortcuts -->
-			<Card 
-				variant="elevated" 
+			<Card
+				variant="elevated"
 				class="p-6"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } } : {}}
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 200, easing: quintOut } }
+					: {}}
 			>
 				<h2 class="m3-font-headline-small mb-4">Canvas Actions</h2>
-				
+
 				<div class="space-y-4">
 					<div class="flex items-center justify-between">
 						<div>
@@ -843,14 +880,12 @@
 							<p class="m3-font-body-small text-on-surface-variant">Undo last action</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.undo'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('canvas.undo')}
-							>
-								{capturingShortcut === 'canvas.undo' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.canvas.undo)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('canvas.undo')}>
+								{capturingShortcut === 'canvas.undo'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.canvas.undo)}
 							</Button>
 						</div>
 					</div>
@@ -861,14 +896,12 @@
 							<p class="m3-font-body-small text-on-surface-variant">Redo last undone action</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.redo'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('canvas.redo')}
-							>
-								{capturingShortcut === 'canvas.redo' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.canvas.redo)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('canvas.redo')}>
+								{capturingShortcut === 'canvas.redo'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.canvas.redo)}
 							</Button>
 						</div>
 					</div>
@@ -879,14 +912,12 @@
 							<p class="m3-font-body-small text-on-surface-variant">Clear all drawings</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.clear'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('canvas.clear')}
-							>
-								{capturingShortcut === 'canvas.clear' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.canvas.clear)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('canvas.clear')}>
+								{capturingShortcut === 'canvas.clear'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.canvas.clear)}
 							</Button>
 						</div>
 					</div>
@@ -897,14 +928,12 @@
 							<p class="m3-font-body-small text-on-surface-variant">Zoom into the canvas</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.zoomIn'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('canvas.zoomIn')}
-							>
-								{capturingShortcut === 'canvas.zoomIn' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.canvas.zoomIn)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('canvas.zoomIn')}>
+								{capturingShortcut === 'canvas.zoomIn'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.canvas.zoomIn)}
 							</Button>
 						</div>
 					</div>
@@ -915,14 +944,12 @@
 							<p class="m3-font-body-small text-on-surface-variant">Zoom out of the canvas</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.zoomOut'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('canvas.zoomOut')}
-							>
-								{capturingShortcut === 'canvas.zoomOut' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.canvas.zoomOut)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('canvas.zoomOut')}>
+								{capturingShortcut === 'canvas.zoomOut'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.canvas.zoomOut)}
 							</Button>
 						</div>
 					</div>
@@ -933,14 +960,12 @@
 							<p class="m3-font-body-small text-on-surface-variant">Reset zoom to 100%</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.resetZoom'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('canvas.resetZoom')}
-							>
-								{capturingShortcut === 'canvas.resetZoom' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.canvas.resetZoom)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('canvas.resetZoom')}>
+								{capturingShortcut === 'canvas.resetZoom'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.canvas.resetZoom)}
 							</Button>
 						</div>
 					</div>
@@ -951,28 +976,27 @@
 							<p class="m3-font-body-small text-on-surface-variant">Save the current drawing</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'canvas.save'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('canvas.save')}
-							>
-								{capturingShortcut === 'canvas.save' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.canvas.save)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('canvas.save')}>
+								{capturingShortcut === 'canvas.save'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.canvas.save)}
 							</Button>
 						</div>
 					</div>
 				</div>
 			</Card>
 
-			<!-- UI Actions Shortcuts -->
-			<Card 
-				variant="elevated" 
+			<Card
+				variant="elevated"
 				class="p-6"
-				{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 300, easing: quintOut } } : {}}
+				{...animateTransitions
+					? { in: fly, params: { y: 20, duration: 400, delay: 300, easing: quintOut } }
+					: {}}
 			>
 				<h2 class="m3-font-headline-small mb-4">UI Actions</h2>
-				
+
 				<div class="space-y-4">
 					<div class="flex items-center justify-between">
 						<div>
@@ -980,14 +1004,12 @@
 							<p class="m3-font-body-small text-on-surface-variant">Show/hide the sidebar</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'ui.toggleSidebar'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('ui.toggleSidebar')}
-							>
-								{capturingShortcut === 'ui.toggleSidebar' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.ui.toggleSidebar)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('ui.toggleSidebar')}>
+								{capturingShortcut === 'ui.toggleSidebar'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.ui.toggleSidebar)}
 							</Button>
 						</div>
 					</div>
@@ -998,14 +1020,12 @@
 							<p class="m3-font-body-small text-on-surface-variant">Open the settings page</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'ui.settings'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('ui.settings')}
-							>
-								{capturingShortcut === 'ui.settings' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.ui.settings)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('ui.settings')}>
+								{capturingShortcut === 'ui.settings'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.ui.settings)}
 							</Button>
 						</div>
 					</div>
@@ -1016,77 +1036,61 @@
 							<p class="m3-font-body-small text-on-surface-variant">Enter/exit fullscreen mode</p>
 						</div>
 						<div class="shortcut-button" class:capturing={capturingShortcut === 'ui.fullscreen'}>
-							<Button
-								variant="outlined"
-								onclick={() => startShortcutCapture('ui.fullscreen')}
-							>
-								{capturingShortcut === 'ui.fullscreen' 
-									? (tempShortcut.key ? formatShortcut(tempShortcut) : 'Press keys...')
-									: formatShortcut(shortcuts.ui.fullscreen)
-								}
+							<Button variant="outlined" onclick={() => startShortcutCapture('ui.fullscreen')}>
+								{capturingShortcut === 'ui.fullscreen'
+									? tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'Press keys...'
+									: formatShortcut(shortcuts.ui.fullscreen)}
 							</Button>
 						</div>
 					</div>
 				</div>
 			</Card>
 
-			<!-- Shortcut Capture Controls -->
 			{#if capturingShortcut}
-				<div 
-					class="card-container"
-					in:scale={{ duration: 200 }}
-				>
-					<Card 
-						variant="elevated" 
-						class="p-6 border-2 border-primary bg-primary-container"
-					>
-					<div class="flex items-center justify-between">
-						<div>
-							<h3 class="m3-font-title-medium">Recording Shortcut</h3>
-							<p class="m3-font-body-small text-on-surface-variant">
-								Press the keys you want to use. Current: {tempShortcut.key ? formatShortcut(tempShortcut) : 'None'}
-							</p>
+				<div class="card-container" in:scale={{ duration: 200 }}>
+					<Card variant="elevated" class="border-primary bg-primary-container border-2 p-6">
+						<div class="flex items-center justify-between">
+							<div>
+								<h3 class="m3-font-title-medium">Recording Shortcut</h3>
+								<p class="m3-font-body-small text-on-surface-variant">
+									Press the keys you want to use. Current: {tempShortcut.key
+										? formatShortcut(tempShortcut)
+										: 'None'}
+								</p>
+							</div>
+							<div class="flex gap-2">
+								<Button variant="outlined" onclick={cancelShortcutCapture}>Cancel</Button>
+								{#if tempShortcut.key}
+									<Button variant="filled" onclick={applyShortcut}>Apply</Button>
+								{/if}
+							</div>
 						</div>
-						<div class="flex gap-2">
-							<Button variant="outlined" onclick={cancelShortcutCapture}>
-								Cancel
-							</Button>
-							{#if tempShortcut.key}
-								<Button variant="filled" onclick={applyShortcut}>
-									Apply
-								</Button>
-							{/if}
-						</div>
-					</div>
 					</Card>
 				</div>
 			{/if}
 		</div>
 	{/if}
 
-	<!-- Action Buttons -->
-	<div 
-		class="flex gap-4 justify-end pt-6 border-t border-outline-variant"
-		{...animateTransitions ? { in: fly, params: { y: 20, duration: 400, delay: 300, easing: quintOut } } : {}}
+	<div
+		class="border-outline-variant flex justify-end gap-4 border-t pt-6"
+		{...animateTransitions
+			? { in: fly, params: { y: 20, duration: 400, delay: 300, easing: quintOut } }
+			: {}}
 	>
-		<Button variant="outlined" onclick={resetToDefaults}>
-			Reset to Defaults
-		</Button>
-		<Button variant="filled" onclick={saveSettings}>
-			Save Settings
-		</Button>
+		<Button variant="outlined" onclick={resetToDefaults}>Reset to Defaults</Button>
+		<Button variant="filled" onclick={saveSettings}>Save Settings</Button>
 	</div>
 </div>
 
-<!-- Snackbar for notifications -->
 <Snackbar bind:this={snackbar} />
 
 <style>
 	:global(.m3-container) {
 		background: rgb(var(--m3-scheme-surface-container-lowest));
 	}
-	
-	/* Custom toggle switch styling */
+
 	.toggle-switch {
 		width: 3.5rem;
 		height: 2rem;
@@ -1096,11 +1100,11 @@
 		cursor: pointer;
 		transition: background-color 0.2s ease;
 	}
-	
+
 	.toggle-switch.checked {
 		background-color: #3b82f6;
 	}
-	
+
 	.toggle-knob {
 		width: 1.5rem;
 		height: 1.5rem;
@@ -1112,11 +1116,11 @@
 		transition: transform 0.2s ease;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	}
-	
+
 	.toggle-knob.checked {
 		transform: translateX(1.5rem);
 	}
-	
+
 	.range-input {
 		width: 100%;
 		height: 0.5rem;
@@ -1126,11 +1130,11 @@
 		opacity: 0.7;
 		transition: opacity 0.2s;
 	}
-	
+
 	.range-input:hover {
 		opacity: 1;
 	}
-	
+
 	.range-input::-webkit-slider-thumb {
 		appearance: none;
 		width: 1.25rem;
@@ -1139,7 +1143,7 @@
 		background: #3b82f6;
 		cursor: pointer;
 	}
-	
+
 	.range-input::-moz-range-thumb {
 		width: 1.25rem;
 		height: 1.25rem;
